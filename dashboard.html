@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Agendamento+</title>
+  
+  <!-- Meta tags para PWA e responsividade -->
+  <meta name="theme-color" content="#007bff">
+  <meta name="apple-mobile-web-app-status-bar-style" content="#007bff">
+  <meta name="msapplication-navbutton-color" content="#007bff">
+  
+  <!-- CSS do Header -->
+  <link rel="stylesheet" href="header.css">
+  
+  <style>
+    /* ========================
+       TEMA CLARO/ESCURO - OTIMIZADO
+    ======================== */
+    :root {
+      --bg-color: #f4f4f4;
+      --text-color: #333;
+      --card-bg: #fff;
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --info-color: #17a2b8;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+    
+    [data-theme="dark"] {
+      --bg-color: #1e1e1e;
+      --text-color: #f4f4f4;
+      --card-bg: #2a2a2a;
+      --primary-color: #0d6efd;
+      --secondary-color: #5a6268;
+      --success-color: #218838;
+      --warning-color: #e0a800;
+      --danger-color: #c82333;
+      --info-color: #138496;
+      --shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* ========================
+       RESET E BASE RESPONSIVA
+    ======================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: var(--transition);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ========================
+       MAIN CONTENT RESPONSIVO
+    ======================== */
+    .main-content {
+      flex: 1;
+      padding: 2rem 0;
+    }
+
+    .section {
+      background: var(--card-bg);
+      padding: clamp(1.5rem, 4vw, 2rem);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      color: var(--text-color);
+      font-weight: 700;
+    }
+
+    /* ========================
+       DASHBOARD GRID RESPONSIVO
+    ======================== */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: clamp(1.25rem, 3vw, 1.5rem);
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+      border-left: 5px solid;
+      transition: transform 0.3s ease;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card.primary {
+      border-left-color: var(--primary-color);
+    }
+
+    .stat-card.success {
+      border-left-color: var(--success-color);
+    }
+
+    .stat-card.warning {
+      border-left-color: var(--warning-color);
+    }
+
+    .stat-card.danger {
+      border-left-color: var(--danger-color);
+    }
+
+    .stat-card.info {
+      border-left-color: var(--info-color);
+    }
+
+    .stat-value {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+      color: var(--secondary-color);
+      margin: 0.5rem 0 0 0;
+      line-height: 1.3;
+    }
+
+    /* ========================
+       AÇÕES RÁPIDAS
+    ======================== */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .action-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: clamp(0.875rem, 2.5vw, 1rem);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: clamp(0.875rem, 2.5vw, 1rem);
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      min-height: 50px;
+    }
+
+    .action-btn:hover {
+      background: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* ========================
+       GRÁFICOS RESPONSIVOS
+    ======================== */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .chart-container {
+      background: var(--card-bg);
+      padding: clamp(1.25rem, 3vw, 1.5rem);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-size: clamp(1rem, 3vw, 1.2rem);
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .chart {
+      width: 100%;
+      height: clamp(150px, 30vw, 200px);
+      background: linear-gradient(45deg, var(--primary-color), var(--info-color));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    }
+
+    /* ========================
+       TABELA RESPONSIVA
+    ======================== */
+    .table-responsive {
+      overflow-x: auto;
+      margin-top: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    .table th,
+    .table td {
+      padding: clamp(0.75rem, 2vw, 1rem);
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    }
+
+    [data-theme="dark"] .table th,
+    [data-theme="dark"] .table td {
+      border-bottom-color: #444;
+    }
+
+    .table th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      white-space: nowrap;
+    }
+
+    .table-striped tbody tr:nth-child(even) {
+      background-color: rgba(0,0,0,0.03);
+    }
+
+    [data-theme="dark"] .table-striped tbody tr:nth-child(even) {
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(0,123,255,0.08);
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.confirmado {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .status-badge.pendente {
+      background-color: var(--warning-color);
+      color: black;
+    }
+
+    .status-badge.cancelado {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* ========================
+       FOOTER RESPONSIVO
+    ======================== */
+    .footer {
+      background: var(--card-bg);
+      padding: 2rem 0 1rem;
+      text-align: center;
+      font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+      margin-top: auto;
+      width: 100%;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .footer-content {
+        grid-template-columns: 1fr auto auto;
+        align-items: center;
+        text-align: left;
+      }
+    }
+
+    .footer-brand {
+      text-align: center;
+    }
+
+    @media (min-width: 768px) {
+      .footer-brand {
+        text-align: left;
+      }
+    }
+
+    .footer-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    @media (min-width: 768px) {
+      .footer-nav {
+        justify-content: flex-start;
+      }
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    @media (min-width: 768px) {
+      .footer-social {
+        justify-content: flex-end;
+      }
+    }
+
+    .footer-nav a,
+    .footer-social a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .footer-nav a:hover,
+    .footer-social a:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+
+    .footer-copy {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #ddd;
+      color: var(--secondary-color);
+    }
+
+    [data-theme="dark"] .footer-copy {
+      border-top-color: #444;
+    }
+
+    /* ========================
+       PRELOADER OTIMIZADO
+    ======================== */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .preloader-logo {
+      font-size: clamp(1.5rem, 8vw, 2.5rem);
+      font-weight: 700;
+      color: var(--primary-color);
+      animation: pulse 1.2s infinite ease-in-out;
+      margin-bottom: 1rem;
+    }
+
+    .preloader-text {
+      color: var(--secondary-color);
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      text-align: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        opacity: 0.7; 
+        transform: scale(1); 
+      }
+      50% { 
+        opacity: 1; 
+        transform: scale(1.05); 
+      }
+    }
+
+    /* ========================
+       BREAKPOINTS ESPECÍFICOS
+    ======================== */
+    
+    /* Mobile Small (até 360px) */
+    @media (max-width: 360px) {
+      .container {
+        width: 95%;
+        padding: 0 0.5rem;
+      }
+      
+      .section {
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+      }
+      
+      .dashboard-grid {
+        gap: 1rem;
+      }
+      
+      .stat-card {
+        padding: 1rem;
+        min-height: 100px;
+      }
+      
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Mobile (até 480px) */
+    @media (max-width: 480px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Tablet (768px a 1024px) */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* Desktop (acima de 1024px) */
+    @media (min-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .quick-actions {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* ========================
+       ACESSIBILIDADE
+    ======================== */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Foco visível para acessibilidade */
+    .btn:focus-visible,
+    .action-btn:focus-visible,
+    .theme-toggle:focus-visible,
+    .nav-link:focus-visible {
+      outline: 3px solid var(--primary-color);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-logo">Dashboard</div>
+  <div class="preloader-text">Carregando dados...</div>
+</div>
+
+<!-- Header será inserido automaticamente aqui -->
+
+<main class="main-content container">
+  <section class="section">
+    <h1 class="section-title">Dashboard Geral</h1>
+    
+    <div class="dashboard-grid">
+      <div class="stat-card primary">
+        <h3 class="stat-value" id="agendamentosHoje">0</h3>
+        <p class="stat-label">Agendamentos Hoje</p>
+      </div>
+      <div class="stat-card success">
+        <h3 class="stat-value" id="agendamentosSemana">0</h3>
+        <p class="stat-label">Agendamentos Esta Semana</p>
+      </div>
+      <div class="stat-card warning">
+        <h3 class="stat-value" id="servicosDisponiveis">0</h3>
+        <p class="stat-label">Serviços Disponíveis</p>
+      </div>
+      <div class="stat-card danger">
+        <h3 class="stat-value" id="pendencias">0</h3>
+        <p class="stat-label">Pendências</p>
+      </div>
+      <div class="stat-card info">
+        <h3 class="stat-value" id="totalClientes">0</h3>
+        <p class="stat-label">Total de Clientes</p>
+      </div>
+      <div class="stat-card primary">
+        <h3 class="stat-value" id="faturamentoMes">R$ 0</h3>
+        <p class="stat-label">Faturamento do Mês</p>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <a href="agendar.html" class="action-btn">Novo Agendamento</a>
+      <a href="serviços.html" class="action-btn">Gerenciar Serviços</a>
+      <a href="clientes.html" class="action-btn">Ver Clientes</a>
+      <a href="perfil.html" class="action-btn">Configurações</a>
+    </div>
+  </section>
+
+  <div class="charts-grid">
+    <div class="chart-container">
+      <h3 class="chart-title">Agendamentos por Serviço</h3>
+      <div class="chart" id="graficoServicos">
+        Gráfico de Serviços
+      </div>
+    </div>
+    <div class="chart-container">
+      <h3 class="chart-title">Faturamento Mensal</h3>
+      <div class="chart" id="graficoFinanceiro">
+        Gráfico Financeiro
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2 class="section-title">Agendamentos Recentes</h2>
+    <div class="table-responsive">
+      <table class="table table-striped" id="tabelaAgendamentos">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Serviço</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaAgendamentosBody">
+          <!-- Linhas serão geradas pelo JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-content">
+    <div class="footer-brand">
+      <a href="#" class="logo">Agendamento+</a>
+      <p>Sistema de Agendamento Online</p>
+    </div>
+    <nav class="footer-nav">
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="serviços.html" class="nav-link">Serviços</a>
+      <a href="agendamento.html" class="nav-link">Agendamentos</a>
+      <a href="clientes.html" class="nav-link">Clientes</a>
+      <a href="perfil.html" class="nav-link">Perfil</a>
+    </nav>
+    <div class="footer-social">
+      <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">Instagram</a>
+      <a href="https://wa.me/5561985825956" target="_blank" class="footer-link">WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-copy">
+    <p>&copy; 2025 Agendamento+. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script src="header.js"></script>
+<script>
+// =====================
+// INICIALIZAÇÃO - CÓDIGO REORGANIZADO E CORRIGIDO
+// =====================
+document.addEventListener('DOMContentLoaded', () => {
+  // =====================
+  // FUNÇÕES DE UTILIDADE
+  // =====================
+  
+  function formatarData(data) {
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function formatarMoeda(valor) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valor);
+  }
+
+  // =====================
+  // FUNÇÕES PRINCIPAIS
+  // =====================
+  
+  function carregarDashboard() {
+    // Carrega dados do localStorage
+    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
+    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+
+    // Estatísticas
+    const hoje = new Date().toISOString().split('T')[0];
+    const agendamentosHoje = agendamentos.filter(a => a.data === hoje).length;
+    
+    // Calcula semana atual
+    const hojeObj = new Date();
+    const inicioSemana = new Date(hojeObj);
+    inicioSemana.setDate(hojeObj.getDate() - hojeObj.getDay());
+    inicioSemana.setHours(0, 0, 0, 0);
+    
+    const agendamentosSemana = agendamentos.filter(a => {
+      const dataAgendamento = new Date(a.data);
+      return dataAgendamento >= inicioSemana;
+    }).length;
+
+    const pendencias = agendamentos.filter(a => a.status === 'pendente').length;
+    const clientesUnicos = [...new Set(agendamentos.map(a => a.cliente))].length;
+
+    // Faturamento do mês atual
+    const mesAtual = new Date().getMonth();
+    const anoAtual = new Date().getFullYear();
+    
+    const faturamentoMes = agendamentos.reduce((total, agendamento) => {
+      const dataAgendamento = new Date(agendamento.data);
+      if (dataAgendamento.getMonth() === mesAtual && dataAgendamento.getFullYear() === anoAtual) {
+        const servico = servicos.find(s => s.nome === agendamento.servico);
+        return total + (servico ? parseFloat(servico.valor) : 0);
+      }
+      return total;
+    }, 0);
+
+    // Atualiza estatísticas
+    document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
+    document.getElementById('agendamentosSemana').textContent = agendamentosSemana;
+    document.getElementById('servicosDisponiveis').textContent = servicos.length;
+    document.getElementById('pendencias').textContent = pendencias;
+    document.getElementById('totalClientes').textContent = clientesUnicos;
+    document.getElementById('faturamentoMes').textContent = formatarMoeda(faturamentoMes);
+
+    // Carrega agendamentos recentes
+    carregarAgendamentosRecentes(agendamentos);
+    
+    // Atualiza gráficos
+    atualizarGraficos(agendamentos, servicos);
+  }
+
+  function carregarAgendamentosRecentes(agendamentos) {
+    const tbody = document.getElementById('tabelaAgendamentosBody');
+    tbody.innerHTML = '';
+
+    // Ordena por data mais recente e pega os últimos 10
+    const recentes = agendamentos
+      .sort((a, b) => new Date(b.data + ' ' + b.hora) - new Date(a.data + ' ' + a.hora))
+      .slice(0, 10);
+
+    if (recentes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum agendamento encontrado</td></tr>';
+      return;
+    }
+
+    recentes.forEach(agendamento => {
+      const tr = document.createElement('tr');
+      const status = agendamento.status || 'confirmado';
+      tr.innerHTML = `
+        <td>${agendamento.cliente}</td>
+        <td>${agendamento.servico}</td>
+        <td>${formatarMoeda(agendamento.valor || 0)}</td>
+        <td>${formatarData(agendamento.data)}</td>
+        <td>${agendamento.hora}</td>
+        <td><span class="status-badge ${status}">${status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function atualizarGraficos(agendamentos, servicos) {
+    // Gráfico de serviços mais populares
+    const servicosCount = {};
+    agendamentos.forEach(agendamento => {
+      servicosCount[agendamento.servico] = (servicosCount[agendamento.servico] || 0) + 1;
+    });
+
+    const servicosMaisPopulares = Object.entries(servicosCount)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5);
+
+    const graficoServicos = document.getElementById('graficoServicos');
+    if (servicosMaisPopulares.length > 0) {
+      graficoServicos.innerHTML = servicosMaisPopulares
+        .map(([servico, count]) => `${servico}: ${count}`)
+        .join('<br>');
+    }
+
+    // Gráfico financeiro simplificado
+    const faturamentoPorMes = {};
+    agendamentos.forEach(agendamento => {
+      const data = new Date(agendamento.data);
+      const mesAno = `${data.getMonth() + 1}/${data.getFullYear()}`;
+      const servico = servicos.find(s => s.nome === agendamento.servico);
+      const valor = servico ? parseFloat(servico.valor) : 0;
+      
+      faturamentoPorMes[mesAno] = (faturamentoPorMes[mesAno] || 0) + valor;
+    });
+
+    const graficoFinanceiro = document.getElementById('graficoFinanceiro');
+    if (Object.keys(faturamentoPorMes).length > 0) {
+      graficoFinanceiro.innerHTML = Object.entries(faturamentoPorMes)
+        .map(([mes, valor]) => `${mes}: ${formatarMoeda(valor)}`)
+        .join('<br>');
+    }
+  }
+
+  // =====================
+  // INICIALIZAÇÃO FINAL
+  // =====================
+  
+  // Carrega dados do dashboard
+  carregarDashboard();
+
+  // Preloader
+  window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    const minLoadTime = 1500;
+    const loadStart = Date.now();
+    
+    setTimeout(() => {
+      const loadTime = Date.now() - loadStart;
+      const remainingTime = Math.max(3000 - loadTime, 0);
+      
+      setTimeout(() => {
+        preloader.classList.add('hidden');
+        setTimeout(() => preloader.remove(), 300);
+      }, remainingTime);
+    }, minLoadTime);
+  });
+
+  // Atualiza dados a cada 30 segundos
+  setInterval(carregarDashboard, 30000);
+});
+</script>
+</body>
+</html>
