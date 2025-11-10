@@ -125,6 +125,9 @@
       color: var(--secondary-color);
     }
 
+    /* ========================
+       BOTÕES
+    ======================== */
     .btn {
       padding: clamp(0.875rem, 2.5vw, 1rem) clamp(1rem, 3vw, 1.25rem);
       border: none;
@@ -138,8 +141,18 @@
       text-align: center;
     }
 
-    .btn-danger {
-      background-color: var(--danger-color);
+    .btn-primary {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-secondary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
       color: white;
     }
 
@@ -149,15 +162,32 @@
       opacity: 0.9;
     }
 
-    .logout-section {
+    .actions-section {
       text-align: center;
       margin-top: 2rem;
       padding-top: 2rem;
       border-top: 1px solid #ddd;
     }
 
-    [data-theme="dark"] .logout-section {
+    [data-theme="dark"] .actions-section {
       border-top-color: #444;
+    }
+
+    .actions-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .actions-buttons {
+        flex-direction: column;
+      }
+      
+      .actions-buttons .btn {
+        width: 100%;
+      }
     }
 
     /* ========================
@@ -322,8 +352,15 @@
         <span class="profile-value" id="profileEmail">Carregando...</span>
       </div>
       
-      <div class="logout-section">
-        <button class="btn btn-danger" onclick="logout()">Sair do Sistema</button>
+      <div class="actions-section">
+        <div class="actions-buttons">
+          <button class="btn btn-primary" onclick="irParaConfiguracoes()">
+            ⚙️ Configurações
+          </button>
+          <button class="btn btn-secondary" onclick="voltar()">
+            ↩️ Voltar
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -371,20 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
-  window.logout = () => {
-    if (confirm('Tem certeza que deseja sair do sistema?')) {
-      fetch('/api/logout')
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            window.location.href = '/';
-          }
-        })
-        .catch(error => {
-          console.error('Erro ao fazer logout:', error);
-          window.location.href = '/';
-        });
-    }
+  window.irParaConfiguracoes = () => {
+    window.location.href = 'configuracoes.html';
+  };
+
+  window.voltar = () => {
+    window.location.href = 'dashboard.html';
   };
 
   // =====================
