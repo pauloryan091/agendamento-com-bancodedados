@@ -118,6 +118,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      cursor: pointer;
     }
 
     .stat-card:hover {
@@ -195,25 +196,19 @@
     }
 
     /* ========================
-       GRÁFICOS RESPONSIVOS
+       GRÁFICO RESPONSIVO
     ======================== */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
     .chart-container {
       background: var(--card-bg);
       padding: clamp(1.25rem, 3vw, 1.5rem);
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      margin-top: 2rem;
     }
 
     .chart-title {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       font-size: clamp(1rem, 3vw, 1.2rem);
       color: var(--text-color);
       font-weight: 600;
@@ -221,15 +216,48 @@
 
     .chart {
       width: 100%;
-      height: clamp(150px, 30vw, 200px);
-      background: linear-gradient(45deg, var(--primary-color), var(--info-color));
-      border-radius: 8px;
+      height: clamp(200px, 40vw, 300px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-bar {
       display: flex;
       align-items: center;
-      justify-content: center;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+
+    .chart-label {
+      min-width: 120px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .chart-bar-container {
+      flex: 1;
+      background: #e9ecef;
+      border-radius: 20px;
+      overflow: hidden;
+      height: 30px;
+    }
+
+    [data-theme="dark"] .chart-bar-container {
+      background: #444;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+      border-radius: 20px;
+      transition: width 1s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 1rem;
       color: white;
-      font-weight: 700;
-      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      font-weight: 600;
+      font-size: 0.875rem;
     }
 
     /* ========================
@@ -469,12 +497,23 @@
       .quick-actions {
         grid-template-columns: 1fr;
       }
+      
+      .chart-label {
+        min-width: 80px;
+        font-size: 0.8rem;
+      }
     }
 
     /* Mobile (até 480px) */
     @media (max-width: 480px) {
-      .charts-grid {
-        grid-template-columns: 1fr;
+      .chart-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      
+      .chart-bar-container {
+        width: 100%;
       }
     }
 
@@ -548,52 +587,40 @@
     <h1 class="section-title">Dashboard Geral</h1>
     
     <div class="dashboard-grid">
-      <div class="stat-card primary">
+      <div class="stat-card primary" onclick="window.location.href='agendamentos.html'">
         <h3 class="stat-value" id="agendamentosHoje">0</h3>
         <p class="stat-label">Agendamentos Hoje</p>
       </div>
-      <div class="stat-card success">
+      <div class="stat-card success" onclick="window.location.href='agendamentos.html'">
         <h3 class="stat-value" id="agendamentosSemana">0</h3>
         <p class="stat-label">Agendamentos Esta Semana</p>
       </div>
-      <div class="stat-card warning">
+      <div class="stat-card warning" onclick="window.location.href='servicos.html'">
         <h3 class="stat-value" id="servicosDisponiveis">0</h3>
         <p class="stat-label">Serviços Disponíveis</p>
       </div>
-      <div class="stat-card danger">
+      <div class="stat-card danger" onclick="window.location.href='agendamentos.html'">
         <h3 class="stat-value" id="pendencias">0</h3>
         <p class="stat-label">Pendências</p>
       </div>
-      <div class="stat-card info">
+      <div class="stat-card info" onclick="window.location.href='clientes.html'">
         <h3 class="stat-value" id="totalClientes">0</h3>
         <p class="stat-label">Total de Clientes</p>
-      </div>
-      <div class="stat-card primary">
-        <h3 class="stat-value" id="faturamentoMes">R$ 0</h3>
-        <p class="stat-label">Faturamento do Mês</p>
       </div>
     </div>
 
     <div class="quick-actions">
-      <a href="agendar.html" class="action-btn">Novo Agendamento</a>
-      <a href="serviços.html" class="action-btn">Gerenciar Serviços</a>
-      <a href="clientes.html" class="action-btn">Ver Clientes</a>
-      <a href="perfil.html" class="action-btn">Configurações</a>
+      <a href="agendamento.html" class="action-btn">📅 Novo Agendamento</a>
+      <a href="servicos.html" class="action-btn">🛠️ Gerenciar Serviços</a>
+      <a href="clientes.html" class="action-btn">👥 Ver Clientes</a>
+      <a href="configuracoes.html" class="action-btn">⚙️ Configurações</a>
     </div>
   </section>
 
-  <div class="charts-grid">
-    <div class="chart-container">
-      <h3 class="chart-title">Agendamentos por Serviço</h3>
-      <div class="chart" id="graficoServicos">
-        Gráfico de Serviços
-      </div>
-    </div>
-    <div class="chart-container">
-      <h3 class="chart-title">Faturamento Mensal</h3>
-      <div class="chart" id="graficoFinanceiro">
-        Gráfico Financeiro
-      </div>
+  <div class="chart-container">
+    <h3 class="chart-title">Serviços Mais Populares</h3>
+    <div class="chart" id="graficoServicos">
+      <!-- Gráfico será gerado dinamicamente -->
     </div>
   </div>
 
@@ -605,7 +632,6 @@
           <tr>
             <th>Cliente</th>
             <th>Serviço</th>
-            <th>Valor</th>
             <th>Data</th>
             <th>Hora</th>
             <th>Status</th>
@@ -627,10 +653,10 @@
     </div>
     <nav class="footer-nav">
       <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="serviços.html" class="nav-link">Serviços</a>
-      <a href="agendamento.html" class="nav-link">Agendamentos</a>
+      <a href="servicos.html" class="nav-link">Serviços</a>
+      <a href="agendamentos.html" class="nav-link">Agendamentos</a>
       <a href="clientes.html" class="nav-link">Clientes</a>
-      <a href="perfil.html" class="nav-link">Perfil</a>
+      <a href="configuracoes.html" class="nav-link">Configurações</a>
     </nav>
     <div class="footer-social">
       <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">Instagram</a>
@@ -645,9 +671,10 @@
 <script src="header.js"></script>
 <script>
 // =====================
-// INICIALIZAÇÃO - CÓDIGO REORGANIZADO E CORRIGIDO
+// DASHBOARD COM INTEGRAÇÃO EM TEMPO REAL
 // =====================
 document.addEventListener('DOMContentLoaded', () => {
+  
   // =====================
   // FUNÇÕES DE UTILIDADE
   // =====================
@@ -657,140 +684,154 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${dia}/${mes}/${ano}`;
   }
 
-  function formatarMoeda(valor) {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(valor);
-  }
-
   // =====================
-  // FUNÇÕES PRINCIPAIS
+  // CARREGAR DADOS DAS APIS
   // =====================
   
-  function carregarDashboard() {
-    // Carrega dados do localStorage
-    const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+  async function carregarDashboard() {
+    try {
+      // Carrega dados de todas as APIs simultaneamente
+      const [agendamentosRes, servicosRes, clientesRes] = await Promise.all([
+        fetch('/api/agendamentos'),
+        fetch('/api/servicos'),
+        fetch('/api/clientes')
+      ]);
 
-    // Estatísticas
+      const agendamentos = await agendamentosRes.json();
+      const servicos = await servicosRes.json();
+      const clientes = await clientesRes.json();
+
+      // Atualiza estatísticas
+      atualizarEstatisticas(agendamentos, servicos, clientes);
+      
+      // Atualiza agendamentos recentes
+      carregarAgendamentosRecentes(agendamentos);
+      
+      // Atualiza gráfico
+      atualizarGraficoServicos(agendamentos, servicos);
+
+    } catch (error) {
+      console.error('Erro ao carregar dashboard:', error);
+    }
+  }
+
+  function atualizarEstatisticas(agendamentos, servicos, clientes) {
     const hoje = new Date().toISOString().split('T')[0];
-    const agendamentosHoje = agendamentos.filter(a => a.data === hoje).length;
     
-    // Calcula semana atual
+    // Agendamentos hoje
+    const agendamentosHoje = agendamentos.filter(a => a.data_agendamento === hoje).length;
+    
+    // Agendamentos esta semana
     const hojeObj = new Date();
     const inicioSemana = new Date(hojeObj);
     inicioSemana.setDate(hojeObj.getDate() - hojeObj.getDay());
     inicioSemana.setHours(0, 0, 0, 0);
     
     const agendamentosSemana = agendamentos.filter(a => {
-      const dataAgendamento = new Date(a.data);
+      const dataAgendamento = new Date(a.data_agendamento);
       return dataAgendamento >= inicioSemana;
     }).length;
 
+    // Pendências
     const pendencias = agendamentos.filter(a => a.status === 'pendente').length;
-    const clientesUnicos = [...new Set(agendamentos.map(a => a.cliente))].length;
 
-    // Faturamento do mês atual
-    const mesAtual = new Date().getMonth();
-    const anoAtual = new Date().getFullYear();
-    
-    const faturamentoMes = agendamentos.reduce((total, agendamento) => {
-      const dataAgendamento = new Date(agendamento.data);
-      if (dataAgendamento.getMonth() === mesAtual && dataAgendamento.getFullYear() === anoAtual) {
-        const servico = servicos.find(s => s.nome === agendamento.servico);
-        return total + (servico ? parseFloat(servico.valor) : 0);
-      }
-      return total;
-    }, 0);
-
-    // Atualiza estatísticas
+    // Atualiza os valores na tela
     document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
     document.getElementById('agendamentosSemana').textContent = agendamentosSemana;
     document.getElementById('servicosDisponiveis').textContent = servicos.length;
     document.getElementById('pendencias').textContent = pendencias;
-    document.getElementById('totalClientes').textContent = clientesUnicos;
-    document.getElementById('faturamentoMes').textContent = formatarMoeda(faturamentoMes);
-
-    // Carrega agendamentos recentes
-    carregarAgendamentosRecentes(agendamentos);
-    
-    // Atualiza gráficos
-    atualizarGraficos(agendamentos, servicos);
+    document.getElementById('totalClientes').textContent = clientes.length;
   }
 
   function carregarAgendamentosRecentes(agendamentos) {
     const tbody = document.getElementById('tabelaAgendamentosBody');
     tbody.innerHTML = '';
 
-    // Ordena por data mais recente e pega os últimos 10
+    // Ordena por data mais recente e pega os últimos 5
     const recentes = agendamentos
-      .sort((a, b) => new Date(b.data + ' ' + b.hora) - new Date(a.data + ' ' + a.hora))
-      .slice(0, 10);
+      .sort((a, b) => new Date(b.data_agendamento + ' ' + b.hora_agendamento) - new Date(a.data_agendamento + ' ' + a.hora_agendamento))
+      .slice(0, 5);
 
     if (recentes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum agendamento encontrado</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum agendamento encontrado</td></tr>';
       return;
     }
 
     recentes.forEach(agendamento => {
       const tr = document.createElement('tr');
-      const status = agendamento.status || 'confirmado';
+      const status = agendamento.status || 'pendente';
       tr.innerHTML = `
-        <td>${agendamento.cliente}</td>
-        <td>${agendamento.servico}</td>
-        <td>${formatarMoeda(agendamento.valor || 0)}</td>
-        <td>${formatarData(agendamento.data)}</td>
-        <td>${agendamento.hora}</td>
+        <td>${agendamento.cliente_nome || 'Cliente não encontrado'}</td>
+        <td>${agendamento.servico_nome || 'Serviço não encontrado'}</td>
+        <td>${formatarData(agendamento.data_agendamento)}</td>
+        <td>${agendamento.hora_agendamento}</td>
         <td><span class="status-badge ${status}">${status}</span></td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  function atualizarGraficos(agendamentos, servicos) {
-    // Gráfico de serviços mais populares
+  function atualizarGraficoServicos(agendamentos, servicos) {
+    const graficoServicos = document.getElementById('graficoServicos');
+    
+    // Conta agendamentos por serviço
     const servicosCount = {};
     agendamentos.forEach(agendamento => {
-      servicosCount[agendamento.servico] = (servicosCount[agendamento.servico] || 0) + 1;
+      const servicoNome = agendamento.servico_nome;
+      if (servicoNome) {
+        servicosCount[servicoNome] = (servicosCount[servicoNome] || 0) + 1;
+      }
     });
 
+    // Ordena por quantidade (mais populares primeiro)
     const servicosMaisPopulares = Object.entries(servicosCount)
       .sort(([,a], [,b]) => b - a)
-      .slice(0, 5);
+      .slice(0, 6); // Top 6 serviços
 
-    const graficoServicos = document.getElementById('graficoServicos');
-    if (servicosMaisPopulares.length > 0) {
-      graficoServicos.innerHTML = servicosMaisPopulares
-        .map(([servico, count]) => `${servico}: ${count}`)
-        .join('<br>');
+    // Encontra o máximo para calcular porcentagens
+    const maxCount = Math.max(...servicosMaisPopulares.map(([, count]) => count), 1);
+
+    if (servicosMaisPopulares.length === 0) {
+      graficoServicos.innerHTML = '<p style="text-align: center; color: var(--secondary-color);">Nenhum dado disponível para o gráfico</p>';
+      return;
     }
 
-    // Gráfico financeiro simplificado
-    const faturamentoPorMes = {};
-    agendamentos.forEach(agendamento => {
-      const data = new Date(agendamento.data);
-      const mesAno = `${data.getMonth() + 1}/${data.getFullYear()}`;
-      const servico = servicos.find(s => s.nome === agendamento.servico);
-      const valor = servico ? parseFloat(servico.valor) : 0;
-      
-      faturamentoPorMes[mesAno] = (faturamentoPorMes[mesAno] || 0) + valor;
+    // Cria o gráfico de barras
+    let chartHTML = '';
+    servicosMaisPopulares.forEach(([servico, count]) => {
+      const porcentagem = (count / maxCount) * 100;
+      chartHTML += `
+        <div class="chart-bar">
+          <span class="chart-label">${servico}</span>
+          <div class="chart-bar-container">
+            <div class="chart-bar-fill" style="width: ${porcentagem}%">
+              ${count} agendamentos
+            </div>
+          </div>
+        </div>
+      `;
     });
 
-    const graficoFinanceiro = document.getElementById('graficoFinanceiro');
-    if (Object.keys(faturamentoPorMes).length > 0) {
-      graficoFinanceiro.innerHTML = Object.entries(faturamentoPorMes)
-        .map(([mes, valor]) => `${mes}: ${formatarMoeda(valor)}`)
-        .join('<br>');
-    }
+    graficoServicos.innerHTML = chartHTML;
+
+    // Anima as barras
+    setTimeout(() => {
+      const bars = graficoServicos.querySelectorAll('.chart-bar-fill');
+      bars.forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.style.width = width;
+        }, 100);
+      });
+    }, 500);
   }
 
   // =====================
-  // INICIALIZAÇÃO FINAL
+  // INICIALIZAÇÃO
   // =====================
   
-  // Carrega dados do dashboard
+  // Carrega dados iniciais
   carregarDashboard();
 
   // Preloader
@@ -812,6 +853,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Atualiza dados a cada 30 segundos
   setInterval(carregarDashboard, 30000);
+
+  // Atualiza quando a página ganha foco (quando usuário volta para a aba)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      carregarDashboard();
+    }
+  });
 });
 </script>
 </body>
