@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory
 import sqlite3
 import os
@@ -44,7 +45,7 @@ def init_db():
         ''')
         
         # Tabela de serviços
-        conn.execute('''
+        conn.execute('''    
             CREATE TABLE IF NOT EXISTS servicos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
@@ -78,7 +79,45 @@ def init_db():
 
 # Inicializar banco de dados
 init_db()
-
+@app.route('/api/clientes/<int:cliente_id>', methods=['PUT'])
+def api_cliente_update(cliente_id):
+    if 'usuario_id' not in session:
+        return jsonify({'error': 'Não autorizado'}), 401
+    
+    usuario_id = session['usuario_id']
+    conn = get_db_connection()
+    
+    try:
+        # Verificar se o cliente pertence ao usuário
+        cliente = conn.execute(
+            'SELECT * FROM clientes WHERE id = ? AND usuario_id = ?', 
+            (cliente_id, usuario_id)
+        ).fetchone()
+        
+        if not cliente:
+            conn.close()
+            return jsonify({'error': 'Cliente não encontrado'}), 404
+        
+        data = request.get_json()
+        nome = data.get('nome')
+        telefone = data.get('telefone')
+        email = data.get('email')
+        
+        if not nome:
+            return jsonify({'success': False, 'message': 'Nome é obrigatório'})
+        
+        conn.execute(
+            'UPDATE clientes SET nome = ?, telefone = ?, email = ? WHERE id = ?',
+            (nome, telefone, email, cliente_id)
+        )
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'success': True, 'message': 'Cliente atualizado com sucesso!'})
+    
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': f'Erro ao atualizar cliente: {str(e)}'})
 # =====================
 # ROTAS PRINCIPAIS (PÁGINAS HTML)
 # =====================
@@ -369,7 +408,8 @@ def api_agendamentos():
     
     if request.method == 'GET':
         agendamentos = conn.execute('''
-            SELECT a.*, c.nome as cliente_nome, s.nome as servico_nome 
+            SELECT a.*, c.nome as cliente_nome, c.telefone as cliente_telefone, 
+                   s.nome as servico_nome, s.valor as servico_valor
             FROM agendamentos a 
             LEFT JOIN clientes c ON a.cliente_id = c.id 
             LEFT JOIN servicos s ON a.servico_id = s.id 
@@ -383,7 +423,9 @@ def api_agendamentos():
             agendamentos_list.append({
                 'id': agendamento['id'],
                 'cliente_nome': agendamento['cliente_nome'],
+                'cliente_telefone': agendamento['cliente_telefone'],
                 'servico_nome': agendamento['servico_nome'],
+                'servico_valor': agendamento['servico_valor'],
                 'data_agendamento': agendamento['data_agendamento'],
                 'hora_agendamento': agendamento['hora_agendamento'],
                 'status': agendamento['status']
@@ -398,6 +440,7 @@ def api_agendamentos():
             servico_id = data.get('servico_id')
             data_agendamento = data.get('data_agendamento')
             hora_agendamento = data.get('hora_agendamento')
+            status = data.get('status', 'pendente')
             
             if not cliente_id or not servico_id or not data_agendamento or not hora_agendamento:
                 return jsonify({'success': False, 'message': 'Todos os campos são obrigatórios'})
@@ -422,8 +465,8 @@ def api_agendamentos():
                 return jsonify({'success': False, 'message': 'Serviço não encontrado'})
             
             conn.execute(
-                'INSERT INTO agendamentos (cliente_id, servico_id, data_agendamento, hora_agendamento, usuario_id) VALUES (?, ?, ?, ?, ?)',
-                (int(cliente_id), int(servico_id), data_agendamento, hora_agendamento, usuario_id)
+                'INSERT INTO agendamentos (cliente_id, servico_id, data_agendamento, hora_agendamento, status, usuario_id) VALUES (?, ?, ?, ?, ?, ?)',
+                (int(cliente_id), int(servico_id), data_agendamento, hora_agendamento, status, usuario_id)
             )
             conn.commit()
             conn.close()
@@ -434,7 +477,7 @@ def api_agendamentos():
             conn.close()
             return jsonify({'success': False, 'message': f'Erro ao criar agendamento: {str(e)}'})
 
-@app.route('/api/agendamentos/<int:agendamento_id>', methods=['DELETE'])
+@app.route('/api/agendamentos/<int:agendamento_id>', methods=['PUT', 'DELETE'])
 def api_agendamento(agendamento_id):
     if 'usuario_id' not in session:
         return jsonify({'error': 'Não autorizado'}), 401
@@ -453,15 +496,114 @@ def api_agendamento(agendamento_id):
             conn.close()
             return jsonify({'error': 'Agendamento não encontrado'}), 404
         
-        conn.execute('DELETE FROM agendamentos WHERE id = ?', (agendamento_id,))
-        conn.commit()
-        conn.close()
+        if request.method == 'PUT':
+            data = request.get_json()
+            status = data.get('status')
+            
+            if status not in ['pendente', 'confirmado', 'cancelado', 'realizado']:
+                conn.close()
+                return jsonify({'success': False, 'message': 'Status inválido'})
+            
+            conn.execute(
+                'UPDATE agendamentos SET status = ? WHERE id = ?',
+                (status, agendamento_id)
+            )
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'success': True, 'message': 'Status do agendamento atualizado com sucesso!'})
         
-        return jsonify({'success': True, 'message': 'Agendamento excluído com sucesso!'})
+        elif request.method == 'DELETE':
+            conn.execute('DELETE FROM agendamentos WHERE id = ?', (agendamento_id,))
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'success': True, 'message': 'Agendamento excluído com sucesso!'})
     
     except Exception as e:
         conn.close()
-        return jsonify({'success': False, 'message': f'Erro ao excluir agendamento: {str(e)}'})
+        return jsonify({'success': False, 'message': f'Erro ao processar agendamento: {str(e)}'})
+
+# =====================
+# API - RELATÓRIOS E ESTATÍSTICAS
+# =====================
+
+@app.route('/api/dashboard/estatisticas')
+def api_dashboard_estatisticas():
+    if 'usuario_id' not in session:
+        return jsonify({'error': 'Não autorizado'}), 401
+    
+    usuario_id = session['usuario_id']
+    conn = get_db_connection()
+    
+    try:
+        # Data atual
+        hoje = datetime.now().strftime('%Y-%m-%d')
+        mes_atual = datetime.now().strftime('%Y-%m')
+        
+        # Agendamentos hoje
+        agendamentos_hoje = conn.execute('''
+            SELECT COUNT(*) as total FROM agendamentos 
+            WHERE usuario_id = ? AND data_agendamento = ?
+        ''', (usuario_id, hoje)).fetchone()['total']
+        
+        # Agendamentos este mês
+        agendamentos_mes = conn.execute('''
+            SELECT COUNT(*) as total FROM agendamentos 
+            WHERE usuario_id = ? AND strftime('%Y-%m', data_agendamento) = ?
+        ''', (usuario_id, mes_atual)).fetchone()['total']
+        
+        # Total de clientes
+        total_clientes = conn.execute('''
+            SELECT COUNT(*) as total FROM clientes WHERE usuario_id = ?
+        ''', (usuario_id,)).fetchone()['total']
+        
+        # Total de serviços
+        total_servicos = conn.execute('''
+            SELECT COUNT(*) as total FROM servicos WHERE usuario_id = ?
+        ''', (usuario_id,)).fetchone()['total']
+        
+        # Faturamento mensal (apenas agendamentos realizados)
+        faturamento_mensal = conn.execute('''
+            SELECT COALESCE(SUM(s.valor), 0) as total 
+            FROM agendamentos a 
+            JOIN servicos s ON a.servico_id = s.id 
+            WHERE a.usuario_id = ? AND a.status = 'realizado' 
+            AND strftime('%Y-%m', a.data_agendamento) = ?
+        ''', (usuario_id, mes_atual)).fetchone()['total']
+        
+        # Agendamentos por status
+        agendamentos_pendentes = conn.execute('''
+            SELECT COUNT(*) as total FROM agendamentos 
+            WHERE usuario_id = ? AND status = 'pendente'
+        ''', (usuario_id,)).fetchone()['total']
+        
+        agendamentos_confirmados = conn.execute('''
+            SELECT COUNT(*) as total FROM agendamentos 
+            WHERE usuario_id = ? AND status = 'confirmado'
+        ''', (usuario_id,)).fetchone()['total']
+        
+        agendamentos_realizados = conn.execute('''
+            SELECT COUNT(*) as total FROM agendamentos 
+            WHERE usuario_id = ? AND status = 'realizado'
+        ''', (usuario_id,)).fetchone()['total']
+        
+        conn.close()
+        
+        return jsonify({
+            'agendamentos_hoje': agendamentos_hoje,
+            'agendamentos_mes': agendamentos_mes,
+            'total_clientes': total_clientes,
+            'total_servicos': total_servicos,
+            'faturamento_mensal': float(faturamento_mensal),
+            'agendamentos_pendentes': agendamentos_pendentes,
+            'agendamentos_confirmados': agendamentos_confirmados,
+            'agendamentos_realizados': agendamentos_realizados
+        })
+    
+    except Exception as e:
+        conn.close()
+        return jsonify({'error': f'Erro ao carregar estatísticas: {str(e)}'}), 500
 
 # =====================
 # API - DADOS DO USUÁRIO

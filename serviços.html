@@ -156,27 +156,6 @@
     }
 
     /* ========================
-       FILTROS
-    ======================== */
-    .filtros-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .filtro-select {
-      padding: 0.5rem 1rem;
-      border-radius: var(--border-radius);
-      border: 2px solid #ddd;
-      background: var(--card-bg);
-      color: var(--text-color);
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    /* ========================
        GRID DE SERVIÇOS
     ======================== */
     .servicos-grid {
@@ -196,7 +175,6 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      cursor: pointer;
     }
 
     [data-theme="dark"] .card {
@@ -270,25 +248,6 @@
       line-height: 1.5;
       flex: 1;
       font-size: clamp(0.875rem, 2.5vw, 1rem);
-    }
-
-    .card-status {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .status-ativo {
-      background-color: rgba(40, 167, 69, 0.2);
-      color: var(--success-color);
-    }
-
-    .status-inativo {
-      background-color: rgba(220, 53, 69, 0.2);
-      color: var(--danger-color);
     }
 
     .card-details {
@@ -582,11 +541,6 @@
       .btn {
         width: 100%;
       }
-      
-      .filtros-container {
-        flex-direction: column;
-        align-items: stretch;
-      }
     }
 
     /* Tablet (768px a 1024px) */
@@ -634,33 +588,33 @@
       outline: 3px solid var(--primary-color);
       outline-offset: 2px;
     }
+
     /* LINKS DO MENU */
-.nav-link {
-  position: relative;
-  color: var(--text-color, #333);
-  text-decoration: none;
-  padding: 10px 15px;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
+    .nav-link {
+      position: relative;
+      color: var(--text-color, #333);
+      text-decoration: none;
+      padding: 10px 15px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
 
-/* Cor do link ativo */
-.nav-link.active {
-  color: #007bff;
-}
+    /* Cor do link ativo */
+    .nav-link.active {
+      color: #007bff;
+    }
 
-/* Faixa azul sob o link ativo */
-.nav-link.active::after {
-  content: "";
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #007bff;
-  border-radius: 2px;
-}
-
+    /* Faixa azul sob o link ativo */
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #007bff;
+      border-radius: 2px;
+    }
   </style>
 </head>
 <body>
@@ -680,25 +634,6 @@
       <button id="btnAddServico" class="btn btn-success">+ Adicionar Serviço</button>
     </div>
     
-    <!-- Filtros -->
-    <div class="filtros-container">
-      <label for="filtroStatus">Filtrar por Status:</label>
-      <select id="filtroStatus" class="filtro-select">
-        <option value="todos">Todos</option>
-        <option value="ativo">Ativo</option>
-        <option value="inativo">Inativo</option>
-      </select>
-      
-      <label for="filtroCategoria">Filtrar por Categoria:</label>
-      <select id="filtroCategoria" class="filtro-select">
-        <option value="todos">Todas</option>
-        <option value="beleza">Beleza</option>
-        <option value="saude">Saúde</option>
-        <option value="bem-estar">Bem-estar</option>
-        <option value="outros">Outros</option>
-      </select>
-    </div>
-    
     <div id="listaServicos" class="servicos-grid" aria-live="polite">
       <!-- Serviços serão carregados dinamicamente via JavaScript -->
     </div>
@@ -712,46 +647,27 @@
     <h2 id="modalTitulo">Adicionar Novo Serviço</h2>
     <form id="formServico">
       <div class="form-group">
-        <label for="nomeServico" class="form-label">Nome do Serviço</label>
+        <label for="nomeServico" class="form-label">Nome do Serviço *</label>
         <input type="text" id="nomeServico" class="form-control" placeholder="Ex: Corte de Cabelo" required>
       </div>
+      
       <div class="form-group">
-        <label for="categoriaServico" class="form-label">Categoria</label>
-        <select id="categoriaServico" class="form-control" required>
-          <option value="beleza">Beleza</option>
-          <option value="saude">Saúde</option>
-          <option value="bem-estar">Bem-estar</option>
-          <option value="outros">Outros</option>
-        </select>
+        <label for="valorServico" class="form-label">Valor (R$) *</label>
+        <input type="number" id="valorServico" class="form-control" placeholder="0.00" min="0" step="0.01" required>
       </div>
+      
+      
+
       <div class="form-group">
-        <label for="descricaoServico" class="form-label">Descrição</label>
-        <textarea id="descricaoServico" class="form-control" placeholder="Descreva o serviço..." required></textarea>
-      </div>
-      <div class="form-group">
-        <label for="valorServico" class="form-label">Valor (R$)</label>
-        <input type="number" id="valorServico" class="form-control" placeholder="50.00" step="0.01" min="0" required>
-      </div>
-      <div class="form-group">
-        <label for="clientesMensais" class="form-label">Clientes Mensais</label>
-        <input type="number" id="clientesMensais" class="form-control" placeholder="0" min="0" required>
-      </div>
-      <div class="form-group">
-        <label for="statusServico" class="form-label">Status</label>
-        <select id="statusServico" class="form-control" required>
-          <option value="ativo">Ativo</option>
-          <option value="inativo">Inativo</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="fotoServico" class="form-label">Foto do Serviço</label>
+        <label for="fotoServico" class="form-label">Foto do Serviço (Opcional)</label>
         <input type="file" id="fotoServico" class="form-control" accept="image/*">
         <small style="color: var(--secondary-color); font-size: 0.875rem; margin-top: 0.5rem; display: block;">
-          A imagem será automaticamente ajustada ao tamanho do card. Formatos recomendados: JPG, PNG, WebP.
+          Formatos suportados: JPG, PNG, WebP. A imagem será otimizada automaticamente.
         </small>
       </div>
+      
       <div class="form-actions">
-        <button type="submit" class="btn btn-success">Adicionar Serviço</button>
+        <button type="submit" class="btn btn-success">Salvar Serviço</button>
         <button type="button" class="btn btn-secondary" onclick="closeModalServico()">Cancelar</button>
       </div>
     </form>
@@ -764,7 +680,7 @@
       <a href="#" class="logo">Agendamento+</a>
       <p>Sistema de Agendamento Online</p>
     </div>
-    <nav class="footer-nav">
+   <nav class="footer-nav">
       <a href="dashboard.html" class="nav-link">Dashboard</a>
       <a href="serviços.html" class="nav-link">Serviços</a>
       <a href="agendamento.html" class="nav-link">Agendamentos</a>
@@ -783,316 +699,7 @@
 
 <script src="header.js"></script>
 <script>
-// GERENCIAMENTO DE SERVIÇOS
-document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('modalServico');
-  const form = document.getElementById('formServico');
-  const listaServicos = document.getElementById('listaServicos');
-  const btnAddServico = document.getElementById('btnAddServico');
-  const filtroStatus = document.getElementById('filtroStatus');
-  const filtroCategoria = document.getElementById('filtroCategoria');
-
-  // =====================
-  // MODAL DE SERVIÇOS
-  // =====================
-  btnAddServico.addEventListener('click', () => { 
-    modal.style.display = 'flex'; 
-    document.getElementById('modalTitulo').textContent = 'Adicionar Novo Serviço';
-    form.reset();
-  });
-
-  window.closeModalServico = () => { 
-    modal.style.display = 'none'; 
-    form.reset();
-  }
-
-  // Fecha modal clicando fora do conteúdo
-  modal.addEventListener('click', e => { 
-    if (e.target === modal) closeModalServico(); 
-  });
-
-  // Fecha modal com ESC
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      if (modal.style.display === 'flex') closeModalServico();
-    }
-  });
-
-  // =====================
-  // FILTROS
-  // =====================
-  filtroStatus.addEventListener('change', filtrarServicos);
-  filtroCategoria.addEventListener('change', filtrarServicos);
-
-  function filtrarServicos() {
-    const statusFiltro = filtroStatus.value;
-    const categoriaFiltro = filtroCategoria.value;
-    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-    
-    let servicosFiltrados = servicos;
-    
-    if (statusFiltro !== 'todos') {
-      servicosFiltrados = servicosFiltrados.filter(servico => servico.status === statusFiltro);
-    }
-    
-    if (categoriaFiltro !== 'todos') {
-      servicosFiltrados = servicosFiltrados.filter(servico => servico.categoria === categoriaFiltro);
-    }
-    
-    carregarServicos(servicosFiltrados);
-  }
-
-  // =====================
-  // GERENCIAMENTO DE SERVIÇOS
-  // =====================
-  function carregarServicos(servicosParaExibir = null){
-    const servicos = servicosParaExibir || JSON.parse(localStorage.getItem('servicos')) || [];
-    listaServicos.innerHTML = '';
-    
-    if (servicos.length === 0) {
-      listaServicos.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--secondary-color);">
-          <p style="font-size: 1.2rem; margin-bottom: 1rem;">Nenhum serviço cadastrado</p>
-          <p>Clique em "Adicionar Serviço" para começar</p>
-        </div>
-      `;
-      return;
-    }
-
-    servicos.forEach((servico, index) => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      
-      // Gerar placeholder se não houver imagem
-      const imagemHTML = servico.foto 
-        ? `<img src="${servico.foto}" alt="${servico.nome}" class="card-img">`
-        : `<div class="card-img-placeholder">${servico.nome}</div>`;
-      
-      // Calcular faturamento mensal
-      const faturamentoMensal = parseFloat(servico.valor) * parseInt(servico.clientesMensais);
-      
-      card.innerHTML = `
-        <div class="card-img-container">
-          ${imagemHTML}
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">${servico.nome}</h3>
-          <span class="card-status status-${servico.status}">${servico.status === 'ativo' ? 'Ativo' : 'Inativo'}</span>
-          <p class="card-text">${servico.descricao}</p>
-          <div class="card-details">
-            <div class="card-detail">
-              <span class="card-detail-label">Valor:</span>
-              <span class="card-detail-value">R$ ${parseFloat(servico.valor).toFixed(2)}</span>
-            </div>
-            <div class="card-detail">
-              <span class="card-detail-label">Clientes/Mês:</span>
-              <span class="card-detail-value">${servico.clientesMensais}</span>
-            </div>
-            <div class="card-detail">
-              <span class="card-detail-label">Faturamento:</span>
-              <span class="card-detail-value">R$ ${faturamentoMensal.toFixed(2)}</span>
-            </div>
-          </div>
-          <div class="card-actions">
-            <button class="btn btn-secondary btn-sm" onclick="editarServico(${index})">Editar</button>
-            <button class="btn btn-danger btn-sm" onclick="excluirServico(${index})">Excluir</button>
-          </div>
-        </div>
-      `;
-      
-      listaServicos.appendChild(card);
-    });
-  }
-
-  // Submissão do formulário
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    
-    const nome = document.getElementById('nomeServico').value.trim();
-    const categoria = document.getElementById('categoriaServico').value;
-    const descricao = document.getElementById('descricaoServico').value.trim();
-    const valor = document.getElementById('valorServico').value;
-    const clientesMensais = document.getElementById('clientesMensais').value;
-    const status = document.getElementById('statusServico').value;
-    const arquivo = document.getElementById('fotoServico').files[0];
-    
-    if (!nome || !descricao || !valor || !clientesMensais) {
-      alert('Preencha todos os campos obrigatórios');
-      return;
-    }
-    
-    // Processar imagem se for fornecida
-    if (arquivo) {
-      processarImagem(arquivo, (fotoProcessada) => {
-        salvarServico(nome, categoria, descricao, valor, clientesMensais, status, fotoProcessada);
-      });
-    } else {
-      // Salvar sem imagem (usará placeholder)
-      salvarServico(nome, categoria, descricao, valor, clientesMensais, status, null);
-    }
-  });
-
-  // Função para processar e otimizar a imagem
-  function processarImagem(arquivo, callback) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const img = new Image();
-      img.onload = function() {
-        // Criar canvas para redimensionar a imagem
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Definir tamanho máximo para otimização
-        const maxWidth = 600;
-        const maxHeight = 400;
-        let { width, height } = img;
-        
-        // Calcular novas dimensões mantendo proporção
-        if (width > height) {
-          if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-          }
-        }
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        // Desenhar imagem redimensionada
-        ctx.drawImage(img, 0, 0, width, height);
-        
-        // Converter para base64 com qualidade otimizada
-        const fotoProcessada = canvas.toDataURL('image/jpeg', 0.8);
-        callback(fotoProcessada);
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(arquivo);
-  }
-
-  function salvarServico(nome, categoria, descricao, valor, clientesMensais, status, foto) {
-    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-    servicos.push({
-      nome,
-      categoria,
-      descricao,
-      valor: parseFloat(valor),
-      clientesMensais: parseInt(clientesMensais),
-      status,
-      foto: foto,
-      dataCriacao: new Date().toISOString()
-    });
-    
-    localStorage.setItem('servicos', JSON.stringify(servicos));
-    carregarServicos();
-    modal.style.display = 'none';
-    form.reset();
-    alert('Serviço adicionado com sucesso!');
-  }
-
-  window.editarServico = (index) => {
-    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-    const servico = servicos[index];
-    
-    document.getElementById('nomeServico').value = servico.nome;
-    document.getElementById('categoriaServico').value = servico.categoria;
-    document.getElementById('descricaoServico').value = servico.descricao;
-    document.getElementById('valorServico').value = servico.valor;
-    document.getElementById('clientesMensais').value = servico.clientesMensais;
-    document.getElementById('statusServico').value = servico.status;
-    document.getElementById('modalTitulo').textContent = 'Editar Serviço';
-    
-    // Remove o serviço da lista temporariamente para edição
-    servicos.splice(index, 1);
-    localStorage.setItem('servicos', JSON.stringify(servicos));
-    
-    modal.style.display = 'flex';
-    carregarServicos();
-  };
-
-  window.excluirServico = (index) => {
-    if (confirm('Tem certeza que deseja excluir este serviço?')) {
-      const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-      servicos.splice(index, 1);
-      localStorage.setItem('servicos', JSON.stringify(servicos));
-      carregarServicos();
-      alert('Serviço excluído com sucesso!');
-    }
-  };
-
-  // =====================
-  // INICIALIZAÇÃO
-  // =====================
-  
-  // Carrega serviços de exemplo se não existirem
-  function inicializarDadosExemplo() {
-    const servicos = JSON.parse(localStorage.getItem('servicos')) || [];
-    if (servicos.length === 0) {
-      const servicosExemplo = [
-        {
-          nome: "Corte de Cabelo",
-          categoria: "beleza",
-          descricao: "Corte completo com lavagem e finalização",
-          valor: 50.00,
-          clientesMensais: 25,
-          status: "ativo",
-          foto: null,
-          dataCriacao: new Date().toISOString()
-        },
-        {
-          nome: "Manicure Completa",
-          categoria: "beleza",
-          descricao: "Manicure com corte, lixamento e esmaltação",
-          valor: 35.00,
-          clientesMensais: 40,
-          status: "ativo",
-          foto: null,
-          dataCriacao: new Date().toISOString()
-        },
-        {
-          nome: "Massagem Relaxante",
-          categoria: "bem-estar",
-          descricao: "Massagem relaxante de 60 minutos",
-          valor: 120.00,
-          clientesMensais: 15,
-          status: "inativo",
-          foto: null,
-          dataCriacao: new Date().toISOString()
-        }
-      ];
-      localStorage.setItem('servicos', JSON.stringify(servicosExemplo));
-    }
-  }
-
-  // Preloader
-  window.addEventListener('load', () => {
-    const preloader = document.getElementById('preloader');
-    const minLoadTime = 1500;
-    const loadStart = Date.now();
-    
-    setTimeout(() => {
-      const loadTime = Date.now() - loadStart;
-      const remainingTime = Math.max(3000 - loadTime, 0);
-      
-      setTimeout(() => {
-        preloader.classList.add('hidden');
-        setTimeout(() => preloader.remove(), 300);
-      }, remainingTime);
-    }, minLoadTime);
-  });
-
-  // Inicializar
-  inicializarDadosExemplo();
-  carregarServicos();
-});
-// No arquivo serviços.html, substitua TODO o JavaScript por este:
-
-// GERENCIAMENTO DE SERVIÇOS
+// GERENCIAMENTO DE SERVIÇOS COM BANCO DE DADOS FLASK
 document.addEventListener('DOMContentLoaded', () => {
   const modal = document.getElementById('modalServico');
   const form = document.getElementById('formServico');
@@ -1126,11 +733,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =====================
-  // CARREGAR SERVIÇOS
+  // CARREGAR SERVIÇOS DO BANCO
   // =====================
   function carregarServicos(){
     fetch('/api/servicos')
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao carregar serviços');
+        }
+        return response.json();
+      })
       .then(servicos => {
         listaServicos.innerHTML = '';
         
@@ -1144,14 +756,21 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        servicos.forEach(servico => {
+        servicos.forEach((servico, index) => {
           const card = document.createElement('div');
           card.className = 'card';
           
-          // Gerar placeholder se não houver imagem
+          // Gerar placeholder colorido baseado no nome
+          const primeiraLetra = servico.nome.charAt(0).toUpperCase();
+          const cores = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#17a2b8', '#6f42c1'];
+          const corIndex = index % cores.length;
+          
+          // Verificar se tem imagem
           const imagemHTML = servico.imagem 
             ? `<img src="${servico.imagem}" alt="${servico.nome}" class="card-img">`
-            : `<div class="card-img-placeholder">${servico.nome}</div>`;
+            : `<div class="card-img-placeholder" style="background: linear-gradient(135deg, ${cores[corIndex]}, ${cores[(corIndex + 2) % cores.length]});">
+                 ${primeiraLetra}
+               </div>`;
           
           card.innerHTML = `
             <div class="card-img-container">
@@ -1159,7 +778,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="card-body">
               <h3 class="card-title">${servico.nome}</h3>
-              <p class="card-text">Valor: R$ ${parseFloat(servico.valor).toFixed(2)}</p>
+              <div class="card-details">
+                <div class="card-detail">
+                  <span class="card-detail-label">Valor:</span>
+                  <span class="card-detail-value">R$ ${parseFloat(servico.valor).toFixed(2)}</span>
+                </div>
+              </div>
               <div class="card-actions">
                 <button class="btn btn-danger btn-sm" onclick="excluirServico(${servico.id})">Excluir</button>
               </div>
@@ -1195,14 +819,19 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     
+    if (parseFloat(valor) <= 0) {
+      alert('O valor deve ser maior que zero');
+      return;
+    }
+    
     // Processar imagem se for fornecida
     if (arquivo) {
       processarImagem(arquivo, (fotoProcessada) => {
-        salvarServico(nome, valor, fotoProcessada);
+        salvarServicoNoBanco(nome, valor, fotoProcessada);
       });
     } else {
       // Salvar sem imagem
-      salvarServico(nome, valor, null);
+      salvarServicoNoBanco(nome, valor, null);
     }
   });
 
@@ -1249,7 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reader.readAsDataURL(arquivo);
   }
 
-  function salvarServico(nome, valor, imagem) {
+  function salvarServicoNoBanco(nome, valor, imagem) {
     const dadosServico = {
       nome: nome,
       valor: parseFloat(valor),

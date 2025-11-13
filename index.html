@@ -12,6 +12,180 @@
   
   <style>
     /* ========================
+   MODAL DE ALERTA - LOGIN
+======================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+    transform: translateY(0);
+}
+
+.modal-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--warning-color);
+}
+
+.modal-title {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.modal-message {
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    line-height: 1.5;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+}
+
+.modal-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    min-width: 120px;
+}
+
+.modal-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-btn:active {
+    transform: translateY(0);
+}
+
+/* ========================
+   RESPONSIVIDADE DO MODAL
+======================== */
+
+/* Mobile Small (até 360px) */
+@media (max-width: 360px) {
+    .modal {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .modal-icon {
+        font-size: 2.5rem;
+    }
+    
+    .modal-btn {
+        padding: 0.625rem 1.25rem;
+    }
+}
+
+/* Mobile (até 480px) */
+@media (max-width: 480px) {
+    .modal {
+        padding: 1.75rem;
+    }
+}
+
+/* Tablet (768px a 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .modal {
+        max-width: 450px;
+        padding: 2.5rem;
+    }
+}
+
+/* Orientação paisagem em mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal {
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+    
+    .modal-icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .modal-title {
+        margin-bottom: 0.75rem;
+    }
+    
+    .modal-message {
+        margin-bottom: 1rem;
+    }
+}
+
+/* ========================
+   ACESSIBILIDADE DO MODAL
+======================== */
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay,
+    .modal {
+        transition: none;
+    }
+}
+
+.modal-btn:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Garantir que o modal tenha o z-index mais alto */
+.modal-overlay {
+    z-index: 10000;
+}
+
+/* Animações suaves para o modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-overlay.active .modal {
+    animation: modalFadeIn 0.3s ease-out;
+}
+    /* ========================
        TEMA CLARO/ESCURO - OTIMIZADO
     ======================== */
     :root {
@@ -642,14 +816,7 @@
         <p>Sistema de Agendamento Online</p>
       </div>
       
-      <nav class="footer-nav" aria-label="Navegação secundária">
-        <a href="dashboard.html" class="nav-link footer-link">Dashboard</a>
-        <a href="servicos.html" class="nav-link footer-link">Serviços</a>
-        <a href="agendamentos.html" class="nav-link footer-link">Agendamentos</a>
-        <a href="clientes.html" class="nav-link footer-link">Clientes</a>
-        <a href="perfil.html" class="nav-link footer-link">Perfil</a>
-      </nav>
-
+   
       <div class="footer-social">
         <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" 
            aria-label="Instagram" class="footer-link">Instagram</a>

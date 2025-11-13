@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agendamentos - Sistema Completo</title>
-  
-  <!-- CSS do Header -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="header.css">
-  
   <style>
+    /* ========================
+       VARIÁVEIS DE TEMA
+    ======================== */
     :root {
       --bg-color: #f4f4f4;
       --text-color: #333;
@@ -18,12 +19,12 @@
       --success-color: #28a745;
       --warning-color: #ffc107;
       --danger-color: #dc3545;
+      --info-color: #17a2b8;
       --shadow: 0 2px 10px rgba(0,0,0,0.1);
       --border-radius: 12px;
       --transition: all 0.3s ease;
     }
     
-    /* TEMA ESCURO */
     [data-theme="dark"] {
       --bg-color: #1a1a1a;
       --text-color: #ffffff;
@@ -33,9 +34,13 @@
       --success-color: #198754;
       --warning-color: #ffc107;
       --danger-color: #dc3545;
+      --info-color: #0dcaf0;
       --shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
     
+    /* ========================
+       ESTILOS GERAIS
+    ======================== */
     * {
       margin: 0;
       padding: 0;
@@ -78,6 +83,14 @@
       gap: 1rem;
     }
 
+    h1 {
+      color: var(--text-color);
+      font-size: 2rem;
+    }
+
+    /* ========================
+       BOTÕES
+    ======================== */
     .btn {
       padding: 0.875rem 1.25rem;
       border: none;
@@ -87,6 +100,9 @@
       cursor: pointer;
       transition: all 0.3s ease;
       text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .btn-success {
@@ -96,6 +112,7 @@
 
     .btn-success:hover {
       background-color: #218838;
+      transform: translateY(-2px);
     }
 
     .btn-danger {
@@ -105,6 +122,7 @@
 
     .btn-danger:hover {
       background-color: #c82333;
+      transform: translateY(-2px);
     }
 
     .btn-secondary {
@@ -114,6 +132,7 @@
 
     .btn-secondary:hover {
       background-color: #5a6268;
+      transform: translateY(-2px);
     }
 
     .btn-primary {
@@ -123,6 +142,27 @@
 
     .btn-primary:hover {
       background-color: #0056b3;
+      transform: translateY(-2px);
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+      color: black;
+    }
+
+    .btn-warning:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px);
+    }
+
+    .btn-info {
+      background-color: var(--info-color);
+      color: white;
+    }
+
+    .btn-info:hover {
+      background-color: #138496;
+      transform: translateY(-2px);
     }
 
     .btn-sm {
@@ -130,6 +170,69 @@
       font-size: 0.875rem;
     }
 
+    /* ========================
+       FILTROS
+    ======================== */
+    .filtros-container {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.5rem;
+    }
+
+    .filtros-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .filtros-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .filtros-toggle {
+      background: none;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filtros-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .filtros-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .filtro-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filtro-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+    }
+
+    /* ========================
+       ESTATÍSTICAS
+    ======================== */
     .agendamentos-stats {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -147,6 +250,10 @@
       transition: var(--transition);
     }
 
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
     .stat-card.primary { border-left-color: var(--primary-color); }
     .stat-card.success { border-left-color: var(--success-color); }
     .stat-card.warning { border-left-color: var(--warning-color); }
@@ -159,27 +266,14 @@
       color: var(--text-color);
     }
 
-    .filters-container {
-      background: var(--card-bg);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      margin-bottom: 1.5rem;
-      transition: var(--transition);
+    .stat-label {
+      color: var(--secondary-color);
+      margin-top: 0.5rem;
     }
 
-    .filters-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: end;
-    }
-
-    .filter-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
+    /* ========================
+       FORMULÁRIOS
+    ======================== */
     .form-label {
       display: block;
       margin-bottom: 0.5rem;
@@ -207,9 +301,18 @@
       border-color: var(--primary-color);
     }
 
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    /* ========================
+       TABELA
+    ======================== */
     .table-responsive {
       overflow-x: auto;
       margin-top: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
     }
 
     .table {
@@ -233,6 +336,7 @@
     .table th {
       background-color: var(--primary-color);
       color: white;
+      font-weight: 600;
     }
 
     .table tbody tr:hover {
@@ -243,17 +347,9 @@
       background-color: rgba(255,255,255,0.05);
     }
 
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .status-confirmado { background-color: var(--success-color); color: white; }
-    .status-pendente { background-color: var(--warning-color); color: black; }
-    .status-cancelado { background-color: var(--danger-color); color: white; }
-
+    /* ========================
+       MODAL
+    ======================== */
     .modal {
       display: none;
       position: fixed;
@@ -294,10 +390,6 @@
       color: var(--danger-color);
     }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
     .form-actions {
       display: flex;
       gap: 0.5rem;
@@ -305,7 +397,42 @@
       margin-top: 2rem;
     }
 
-    /* Footer Styles */
+    /* ========================
+       STATUS BADGES
+    ======================== */
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+      text-align: center;
+      min-width: 100px;
+    }
+
+    .status-pendente {
+      background-color: var(--warning-color);
+      color: black;
+    }
+
+    .status-confirmado {
+      background-color: var(--info-color);
+      color: white;
+    }
+
+    .status-realizado {
+      background-color: var(--success-color);
+      color: white;
+    }
+
+    .status-cancelado {
+      background-color: var(--danger-color);
+      color: white;
+    }
+
+    /* ========================
+       FOOTER
+    ======================== */
     .footer {
       background: var(--card-bg);
       padding: 2rem 0 1rem;
@@ -390,31 +517,174 @@
     [data-theme="dark"] .footer-copy {
       border-top-color: #555;
     }
+
+    /* ========================
+       PRELOADER
+    ======================== */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .preloader-logo {
+      font-size: clamp(1.5rem, 8vw, 2.5rem);
+      font-weight: 700;
+      color: var(--primary-color);
+      animation: pulse 1.2s infinite ease-in-out;
+      margin-bottom: 1rem;
+    }
+
+    .preloader-text {
+      color: var(--secondary-color);
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      text-align: center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { 
+        opacity: 0.7; 
+        transform: scale(1); 
+      }
+      50% { 
+        opacity: 1; 
+        transform: scale(1.05); 
+      }
+    }
+
+    /* ========================
+       RESPONSIVIDADE
+    ======================== */
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
+        padding: 1rem 0;
+      }
+      
+      .section {
+        padding: 1.5rem;
+      }
+      
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .agendamentos-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .filtros-content {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
 
-<!-- Header será carregado automaticamente -->
+<!-- Preloader -->
+<div id="preloader">
+  <div class="preloader-logo">Agendamento</div>
+  <div class="preloader-text">Carregando dados...</div>
+</div>
+
+<!-- Header será inserido automaticamente pelo header.js -->
 
 <main class="container">
   <section class="section">
     <div class="page-header">
       <h1>Gerenciar Agendamentos</h1>
-      <button id="btnNovoAgendamento" class="btn btn-success">+ Novo Agendamento</button>
+      <button id="btnNovoAgendamento" class="btn btn-success">
+        <i class="fas fa-plus"></i> Novo Agendamento
+      </button>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filtros-container">
+      <div class="filtros-header">
+       
+        <button class="filtros-toggle" id="toggleFiltros">
+          <i class="fas fa-filter"></i> Filtros
+        </button>
+      </div>
+      
+      <div class="filtros-content" id="filtrosContent">
+        <div class="filtro-group">
+          <label class="filtro-label">Status</label>
+          <select id="filtroStatus" class="form-control">
+            <option value="">Todos os status</option>
+            <option value="pendente">Pendente</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="realizado">Realizado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+        
+        <div class="filtro-group">
+          <label class="filtro-label">Data Início</label>
+          <input type="date" id="filtroDataInicio" class="form-control">
+        </div>
+        
+        <div class="filtro-group">
+          <label class="filtro-label">Data Fim</label>
+          <input type="date" id="filtroDataFim" class="form-control">
+        </div>
+        
+        <div class="filtro-group">
+          <label class="filtro-label">Cliente</label>
+          <select id="filtroCliente" class="form-control">
+            <option value="">Todos os clientes</option>
+          </select>
+        </div>
+        
+        <div class="filtro-group">
+          <label class="filtro-label">Serviço</label>
+          <select id="filtroServico" class="form-control">
+            <option value="">Todos os serviços</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="filtros-actions">
+        <button class="btn btn-primary btn-sm" id="btnAplicarFiltros">
+          <i class="fas fa-search"></i> Aplicar Filtros
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btnLimparFiltros">
+          <i class="fas fa-times"></i> Limpar Filtros
+        </button>
+      </div>
     </div>
 
     <div class="agendamentos-stats">
       <div class="stat-card primary">
         <h3 class="stat-value" id="totalAgendamentos">0</h3>
-        <p>Total de Agendamentos</p>
+        <p class="stat-label">Total de Agendamentos</p>
       </div>
       <div class="stat-card success">
         <h3 class="stat-value" id="agendamentosHoje">0</h3>
-        <p>Agendamentos Hoje</p>
+        <p class="stat-label">Agendamentos Hoje</p>
       </div>
       <div class="stat-card warning">
-        <h3 class="stat-value" id="agendamentosPendentes">0</h3>
-        <p>Pendentes</p>
+        <h3 class="stat-value" id="agendamentosFuturos">0</h3>
+        <p class="stat-label">Agendamentos Futuros</p>
+      </div>
+      <div class="stat-card danger">
+        <h3 class="stat-value" id="agendamentosPassados">0</h3>
+        <p class="stat-label">Agendamentos Passados</p>
       </div>
     </div>
 
@@ -426,45 +696,87 @@
             <th>Serviço</th>
             <th>Data</th>
             <th>Hora</th>
+            <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
         <tbody id="tabelaAgendamentosBody">
+          <!-- Linhas serão geradas pelo JavaScript -->
         </tbody>
       </table>
     </div>
   </section>
 </main>
 
-<!-- Modal -->
+<!-- Modal de Agendamento -->
 <div class="modal" id="modalAgendamento">
   <div class="modal-content">
-    <button class="modal-close" onclick="fecharModalAgendamento()">&times;</button>
+    <button class="modal-close" id="modalClose">&times;</button>
     <h2 id="modalTitulo">Novo Agendamento</h2>
     <form id="formAgendamento">
       <div class="form-group">
-        <label for="editCliente" class="form-label">Cliente</label>
+        <label for="editCliente" class="form-label">Cliente *</label>
         <select id="editCliente" class="form-control" required>
           <option value="">Selecione um cliente</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="editServico" class="form-label">Serviço</label>
+        <label for="editServico" class="form-label">Serviço *</label>
         <select id="editServico" class="form-control" required>
           <option value="">Selecione um serviço</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="editData" class="form-label">Data</label>
+        <label for="editData" class="form-label">Data *</label>
         <input type="date" id="editData" class="form-control" required>
       </div>
       <div class="form-group">
-        <label for="editHora" class="form-label">Hora</label>
+        <label for="editHora" class="form-label">Hora *</label>
         <input type="time" id="editHora" class="form-control" required>
       </div>
+      <div class="form-group">
+        <label for="editStatus" class="form-label">Status *</label>
+        <select id="editStatus" class="form-control" required>
+          <option value="pendente">Pendente</option>
+          <option value="confirmado">Confirmado</option>
+          <option value="realizado">Realizado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
       <div class="form-actions">
-        <button type="submit" class="btn btn-success">Salvar Agendamento</button>
-        <button type="button" class="btn btn-secondary" onclick="fecharModalAgendamento()">Cancelar</button>
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-save"></i> Salvar Agendamento
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnCancelar">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de Edição de Status -->
+<div class="modal" id="modalStatus">
+  <div class="modal-content">
+    <button class="modal-close" id="modalStatusClose">&times;</button>
+    <h2>Alterar Status do Agendamento</h2>
+    <form id="formStatus">
+      <div class="form-group">
+        <label for="statusAgendamento" class="form-label">Novo Status *</label>
+        <select id="statusAgendamento" class="form-control" required>
+          <option value="pendente">Pendente</option>
+          <option value="confirmado">Confirmado</option>
+          <option value="realizado">Realizado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-save"></i> Atualizar Status
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnCancelarStatus">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
       </div>
     </form>
   </div>
@@ -478,14 +790,18 @@
     </div>
     <nav class="footer-nav">
       <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="servicos.html" class="nav-link">Serviços</a>
-      <a href="agendamentos.html" class="nav-link">Agendamentos</a>
+      <a href="serviços.html" class="nav-link">Serviços</a>
+      <a href="agendamento.html" class="nav-link">Agendamentos</a>
       <a href="clientes.html" class="nav-link">Clientes</a>
       <a href="perfil.html" class="nav-link">Perfil</a>
     </nav>
     <div class="footer-social">
-      <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">Instagram</a>
-      <a href="https://wa.me/5561985825956" target="_blank" class="footer-link">WhatsApp</a>
+      <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">
+         Instagram
+      </a>
+      <a href="https://wa.me/5561985825956" target="_blank" class="footer-link">
+         WhatsApp
+      </a>
     </div>
   </div>
   <div class="footer-copy">
@@ -496,88 +812,207 @@
 <script src="header.js"></script>
 <script>
 // =====================
-// SISTEMA DE TEMA
-// =====================
-function inicializarTema() {
-  const temaSalvo = localStorage.getItem('tema') || 'light';
-  document.documentElement.setAttribute('data-theme', temaSalvo);
-}
-
-function alternarTema() {
-  const temaAtual = document.documentElement.getAttribute('data-theme');
-  const novoTema = temaAtual === 'light' ? 'dark' : 'light';
-  
-  document.documentElement.setAttribute('data-theme', novoTema);
-  localStorage.setItem('tema', novoTema);
-}
-
-// =====================
 // GERENCIAMENTO DE AGENDAMENTOS
 // =====================
 let agendamentoEditando = null;
+let agendamentoStatusEditando = null;
+let clientes = [];
+let servicos = [];
+let todosAgendamentos = [];
+let filtrosAtivos = {
+  status: '',
+  dataInicio: '',
+  dataFim: '',
+  cliente: '',
+  servico: ''
+};
 
 // Carregar dados iniciais
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar tema
-  inicializarTema();
-  
-  // Configurar evento do botão de tema no header
-  const themeToggle = document.getElementById('themeToggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', alternarTema);
-  }
-  
   carregarAgendamentos();
   carregarClientes();
   carregarServicos();
   
+  // Event listeners para os filtros
+  document.getElementById('toggleFiltros').addEventListener('click', toggleFiltros);
+  document.getElementById('btnAplicarFiltros').addEventListener('click', aplicarFiltros);
+  document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+  
   document.getElementById('btnNovoAgendamento').addEventListener('click', abrirModalNovo);
   document.getElementById('formAgendamento').addEventListener('submit', salvarAgendamento);
+  document.getElementById('btnCancelar').addEventListener('click', fecharModalAgendamento);
+  document.getElementById('modalClose').addEventListener('click', fecharModalAgendamento);
+  
+  document.getElementById('formStatus').addEventListener('submit', atualizarStatus);
+  document.getElementById('btnCancelarStatus').addEventListener('click', fecharModalStatus);
+  document.getElementById('modalStatusClose').addEventListener('click', fecharModalStatus);
+  
+  // Fechar modal clicando fora
+  document.getElementById('modalAgendamento').addEventListener('click', function(e) {
+    if (e.target === this) fecharModalAgendamento();
+  });
+  
+  document.getElementById('modalStatus').addEventListener('click', function(e) {
+    if (e.target === this) fecharModalStatus();
+  });
 });
 
-async function carregarAgendamentos() {
-  try {
-    const response = await fetch('/api/agendamentos');
-    const agendamentos = await response.json();
-    atualizarTabela(agendamentos);
-    atualizarEstatisticas(agendamentos);
-  } catch (error) {
-    console.error('Erro ao carregar agendamentos:', error);
+function toggleFiltros() {
+  const filtrosContent = document.getElementById('filtrosContent');
+  const toggleBtn = document.getElementById('toggleFiltros');
+  
+  if (filtrosContent.style.display === 'none') {
+    filtrosContent.style.display = 'grid';
+    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Ocultar Filtros';
+  } else {
+    filtrosContent.style.display = 'none';
+    toggleBtn.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
   }
 }
 
-async function carregarClientes() {
-  try {
-    const response = await fetch('/api/clientes');
-    const clientes = await response.json();
-    
-    const selectEdit = document.getElementById('editCliente');
-    selectEdit.innerHTML = '<option value="">Selecione um cliente</option>';
-    
-    clientes.forEach(cliente => {
-      const option = new Option(cliente.nome, cliente.id);
-      selectEdit.add(option);
-    });
-  } catch (error) {
-    console.error('Erro ao carregar clientes:', error);
-  }
+function aplicarFiltros() {
+  filtrosAtivos = {
+    status: document.getElementById('filtroStatus').value,
+    dataInicio: document.getElementById('filtroDataInicio').value,
+    dataFim: document.getElementById('filtroDataFim').value,
+    cliente: document.getElementById('filtroCliente').value,
+    servico: document.getElementById('filtroServico').value
+  };
+  
+  filtrarAgendamentos();
 }
 
-async function carregarServicos() {
-  try {
-    const response = await fetch('/api/servicos');
-    const servicos = await response.json();
-    
-    const selectEdit = document.getElementById('editServico');
-    selectEdit.innerHTML = '<option value="">Selecione um serviço</option>';
-    
-    servicos.forEach(servico => {
-      const option = new Option(servico.nome, servico.id);
-      selectEdit.add(option);
-    });
-  } catch (error) {
-    console.error('Erro ao carregar serviços:', error);
+function limparFiltros() {
+  document.getElementById('filtroStatus').value = '';
+  document.getElementById('filtroDataInicio').value = '';
+  document.getElementById('filtroDataFim').value = '';
+  document.getElementById('filtroCliente').value = '';
+  document.getElementById('filtroServico').value = '';
+  
+  filtrosAtivos = {
+    status: '',
+    dataInicio: '',
+    dataFim: '',
+    cliente: '',
+    servico: ''
+  };
+  
+  filtrarAgendamentos();
+}
+
+function filtrarAgendamentos() {
+  let agendamentosFiltrados = [...todosAgendamentos];
+  
+  // Filtrar por status
+  if (filtrosAtivos.status) {
+    agendamentosFiltrados = agendamentosFiltrados.filter(a => a.status === filtrosAtivos.status);
   }
+  
+  // Filtrar por data início
+  if (filtrosAtivos.dataInicio) {
+    agendamentosFiltrados = agendamentosFiltrados.filter(a => a.data_agendamento >= filtrosAtivos.dataInicio);
+  }
+  
+  // Filtrar por data fim
+  if (filtrosAtivos.dataFim) {
+    agendamentosFiltrados = agendamentosFiltrados.filter(a => a.data_agendamento <= filtrosAtivos.dataFim);
+  }
+  
+  // Filtrar por cliente
+  if (filtrosAtivos.cliente) {
+    agendamentosFiltrados = agendamentosFiltrados.filter(a => a.cliente_id == filtrosAtivos.cliente);
+  }
+  
+  // Filtrar por serviço
+  if (filtrosAtivos.servico) {
+    agendamentosFiltrados = agendamentosFiltrados.filter(a => a.servico_id == filtrosAtivos.servico);
+  }
+  
+  atualizarTabela(agendamentosFiltrados);
+  atualizarEstatisticas(agendamentosFiltrados);
+}
+
+function carregarAgendamentos() {
+  fetch('/api/agendamentos')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao carregar agendamentos');
+      }
+      return response.json();
+    })
+    .then(agendamentos => {
+      todosAgendamentos = agendamentos;
+      filtrarAgendamentos();
+    })
+    .catch(error => {
+      console.error('Erro ao carregar agendamentos:', error);
+      document.getElementById('tabelaAgendamentosBody').innerHTML = 
+        '<tr><td colspan="6" style="text-align: center;">Erro ao carregar agendamentos</td></tr>';
+    });
+}
+
+function carregarClientes() {
+  fetch('/api/clientes')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao carregar clientes');
+      }
+      return response.json();
+    })
+    .then(data => {
+      clientes = data;
+      
+      // Preencher select do modal
+      const selectEdit = document.getElementById('editCliente');
+      selectEdit.innerHTML = '<option value="">Selecione um cliente</option>';
+      
+      // Preencher select do filtro
+      const selectFiltro = document.getElementById('filtroCliente');
+      selectFiltro.innerHTML = '<option value="">Todos os clientes</option>';
+      
+      clientes.forEach(cliente => {
+        const option = new Option(cliente.nome, cliente.id);
+        const optionFiltro = new Option(cliente.nome, cliente.id);
+        selectEdit.add(option);
+        selectFiltro.add(optionFiltro);
+      });
+    })
+    .catch(error => {
+      console.error('Erro ao carregar clientes:', error);
+      alert('Erro ao carregar lista de clientes');
+    });
+}
+
+function carregarServicos() {
+  fetch('/api/servicos')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro ao carregar serviços');
+      }
+      return response.json();
+    })
+    .then(data => {
+      servicos = data;
+      
+      // Preencher select do modal
+      const selectEdit = document.getElementById('editServico');
+      selectEdit.innerHTML = '<option value="">Selecione um serviço</option>';
+      
+      // Preencher select do filtro
+      const selectFiltro = document.getElementById('filtroServico');
+      selectFiltro.innerHTML = '<option value="">Todos os serviços</option>';
+      
+      servicos.forEach(servico => {
+        const option = new Option(`${servico.nome} - R$ ${parseFloat(servico.valor).toFixed(2)}`, servico.id);
+        const optionFiltro = new Option(servico.nome, servico.id);
+        selectEdit.add(option);
+        selectFiltro.add(optionFiltro);
+      });
+    })
+    .catch(error => {
+      console.error('Erro ao carregar serviços:', error);
+      alert('Erro ao carregar lista de serviços');
+    });
 }
 
 function atualizarEstatisticas(agendamentos) {
@@ -585,11 +1020,13 @@ function atualizarEstatisticas(agendamentos) {
   
   const totalAgendamentos = agendamentos.length;
   const agendamentosHoje = agendamentos.filter(a => a.data_agendamento === hoje).length;
-  const agendamentosPendentes = agendamentos.filter(a => a.status === 'pendente').length;
+  const agendamentosFuturos = agendamentos.filter(a => a.data_agendamento > hoje).length;
+  const agendamentosPassados = agendamentos.filter(a => a.data_agendamento < hoje).length;
   
   document.getElementById('totalAgendamentos').textContent = totalAgendamentos;
   document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
-  document.getElementById('agendamentosPendentes').textContent = agendamentosPendentes;
+  document.getElementById('agendamentosFuturos').textContent = agendamentosFuturos;
+  document.getElementById('agendamentosPassados').textContent = agendamentosPassados;
 }
 
 function atualizarTabela(agendamentos) {
@@ -597,19 +1034,49 @@ function atualizarTabela(agendamentos) {
   tbody.innerHTML = '';
 
   if (agendamentos.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Nenhum agendamento encontrado</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhum agendamento encontrado</td></tr>';
     return;
   }
 
+  // Ordenar por data (mais recentes primeiro)
+  agendamentos.sort((a, b) => {
+    const dataA = new Date(a.data_agendamento + 'T' + a.hora_agendamento);
+    const dataB = new Date(b.data_agendamento + 'T' + b.hora_agendamento);
+    return dataB - dataA;
+  });
+
   agendamentos.forEach(agendamento => {
     const tr = document.createElement('tr');
+    const status = agendamento.status || 'pendente';
+    const statusClass = `status-${status}`;
+    
+    // Botão de ligação
+    const botaoLigacao = agendamento.cliente_telefone ? 
+      `<button class="btn btn-info btn-sm" onclick="fazerLigacao('${agendamento.cliente_telefone}')">
+        <i class="fas fa-phone"></i> Ligar
+      </button>` : 
+      '<span class="btn btn-secondary btn-sm disabled"><i class="fas fa-phone"></i> Sem telefone</span>';
+    
     tr.innerHTML = `
       <td>${agendamento.cliente_nome || 'Cliente não encontrado'}</td>
       <td>${agendamento.servico_nome || 'Serviço não encontrado'}</td>
       <td>${formatarData(agendamento.data_agendamento)}</td>
       <td>${agendamento.hora_agendamento}</td>
       <td>
-        <button class="btn btn-danger btn-sm" onclick="cancelarAgendamento(${agendamento.id})">Cancelar</button>
+        <span class="status-badge ${statusClass}">
+          ${status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+      </td>
+      <td>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          ${botaoLigacao}
+          <button class="btn btn-primary btn-sm" onclick="abrirModalStatus(${agendamento.id})">
+            <i class="fas fa-edit"></i> Status
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="excluirAgendamento(${agendamento.id})">
+            <i class="fas fa-trash"></i> Excluir
+          </button>
+        </div>
       </td>
     `;
     tbody.appendChild(tr);
@@ -621,10 +1088,32 @@ function formatarData(data) {
   return `${dia}/${mes}/${ano}`;
 }
 
+function fazerLigacao(telefone) {
+  // Remove caracteres não numéricos
+  const numeroLimpo = telefone.replace(/\D/g, '');
+  
+  if (numeroLimpo) {
+    // Abre o link de telefone (funciona em dispositivos móveis)
+    window.open(`tel:${numeroLimpo}`, '_self');
+    
+    // Para desktop, mostra um alerta
+    if (!/Mobi|Android/i.test(navigator.userAgent)) {
+      alert(`Ligação para: ${telefone}\n\nEm um dispositivo móvel, esta ação iniciaria uma chamada telefônica.`);
+    }
+  } else {
+    alert('Número de telefone inválido');
+  }
+}
+
 function abrirModalNovo() {
   agendamentoEditando = null;
   document.getElementById('modalTitulo').textContent = 'Novo Agendamento';
   document.getElementById('formAgendamento').reset();
+  
+  // Definir data mínima como hoje
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('editData').min = hoje;
+  
   document.getElementById('modalAgendamento').style.display = 'flex';
 }
 
@@ -633,69 +1122,133 @@ function fecharModalAgendamento() {
   agendamentoEditando = null;
 }
 
-async function salvarAgendamento(e) {
+function abrirModalStatus(agendamentoId) {
+  agendamentoStatusEditando = agendamentoId;
+  document.getElementById('modalStatus').style.display = 'flex';
+}
+
+function fecharModalStatus() {
+  document.getElementById('modalStatus').style.display = 'none';
+  agendamentoStatusEditando = null;
+}
+
+function salvarAgendamento(e) {
   e.preventDefault();
   
   const dados = {
-    cliente_id: document.getElementById('editCliente').value,
-    servico_id: document.getElementById('editServico').value,
+    cliente_id: parseInt(document.getElementById('editCliente').value),
+    servico_id: parseInt(document.getElementById('editServico').value),
     data_agendamento: document.getElementById('editData').value,
-    hora_agendamento: document.getElementById('editHora').value
+    hora_agendamento: document.getElementById('editHora').value,
+    status: document.getElementById('editStatus').value
   };
 
   // Validar dados
-  if (!dados.cliente_id || !dados.servico_id || !dados.data_agendamento || !dados.hora_agendamento) {
+  if (!dados.cliente_id || !dados.servico_id || !dados.data_agendamento || !dados.hora_agendamento || !dados.status) {
     alert('Todos os campos são obrigatórios');
     return;
   }
 
-  try {
-    const response = await fetch('/api/agendamentos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dados)
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      alert(result.message);
+  // Validar se a data não é no passado
+  const dataAgendamento = new Date(dados.data_agendamento + 'T' + dados.hora_agendamento);
+  const agora = new Date();
+  if (dataAgendamento < agora) {
+    alert('Não é possível agendar para datas/horários no passado');
+    return;
+  }
+
+  fetch('/api/agendamentos', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
       fecharModalAgendamento();
       carregarAgendamentos();
     } else {
-      alert(result.message);
+      alert(data.message);
     }
-  } catch (error) {
+  })
+  .catch(error => {
     console.error('Erro ao salvar agendamento:', error);
     alert('Erro ao salvar agendamento');
-  }
+  });
 }
 
-async function cancelarAgendamento(id) {
-  if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-    try {
-      const response = await fetch(`/api/agendamentos/${id}`, { 
-        method: 'DELETE' 
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        alert(result.message);
+function atualizarStatus(e) {
+  e.preventDefault();
+  
+  const novoStatus = document.getElementById('statusAgendamento').value;
+  
+  if (!agendamentoStatusEditando) {
+    alert('Erro: ID do agendamento não encontrado');
+    return;
+  }
+
+  fetch(`/api/agendamentos/${agendamentoStatusEditando}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status: novoStatus })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
+      fecharModalStatus();
+      carregarAgendamentos();
+    } else {
+      alert(data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Erro ao atualizar status:', error);
+    alert('Erro ao atualizar status do agendamento');
+  });
+}
+
+function excluirAgendamento(id) {
+  if (confirm('Tem certeza que deseja excluir este agendamento?')) {
+    fetch(`/api/agendamentos/${id}`, {
+      method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
         carregarAgendamentos();
       } else {
-        alert(result.message);
+        alert(data.message);
       }
-    } catch (error) {
-      console.error('Erro ao cancelar agendamento:', error);
-      alert('Erro ao cancelar agendamento');
-    }
+    })
+    .catch(error => {
+      console.error('Erro ao excluir agendamento:', error);
+      alert('Erro ao excluir agendamento');
+    });
   }
 }
 
-// Fechar modal clicando fora
-document.getElementById('modalAgendamento').addEventListener('click', function(e) {
-  if (e.target === this) fecharModalAgendamento();
+// Preloader
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  const minLoadTime = 1500;
+  const loadStart = Date.now();
+  
+  setTimeout(() => {
+    const loadTime = Date.now() - loadStart;
+    const remainingTime = Math.max(3000 - loadTime, 0);
+    
+    setTimeout(() => {
+      preloader.classList.add('hidden');
+      setTimeout(() => preloader.remove(), 300);
+    }, remainingTime);
+  }, minLoadTime);
 });
 </script>
 </body>

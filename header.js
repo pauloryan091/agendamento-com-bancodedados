@@ -10,7 +10,7 @@ function loadHeader() {
     const header = document.createElement('header');
     header.innerHTML = `
         <div class="container header-content">
-            <a href="index.html" class="logo">Agendamento+</a>
+            <a href="#" class="logo">Agendamento+</a>
             <button id="menuBtn" aria-label="Abrir menu">☰</button>
             <nav id="menu" class="nav-links">
                 <a href="dashboard.html" class="nav-link">Dashboard</a>
@@ -106,7 +106,7 @@ function initHeader() {
 function updateThemeButton(theme) {
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
-        themeToggle.textContent = theme === 'light' ? '🌙 Tema Escuro' : '☀️ Tema Claro';
+        themeToggle.textContent = theme === 'light' ? ' Tema Escuro' : ' Tema Claro';
     }
 }
 

@@ -501,36 +501,10 @@
     <h1 class="section-title">Configurações do Sistema</h1>
     
     <div class="settings-grid">
-      <!-- Configurações de Tema -->
-      <div class="setting-card">
-        <div class="setting-header">
-          <div class="setting-icon">🎨</div>
-          <h3 class="setting-title">Aparência</h3>
-        </div>
-        <p class="setting-description">Personalize a aparência do sistema conforme sua preferência visual.</p>
-        
-        <div class="system-status">
-          <div class="status-indicator status-online"></div>
-          <span class="status-text">Tema Atual: <span id="currentTheme">Claro</span></span>
-        </div>
-
-        <div style="margin-top: 1.5rem;">
-          <label class="form-label" style="display: block; margin-bottom: 1rem; font-weight: 600;">Modo Escuro</label>
-          <label class="switch">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <button class="btn btn-primary" onclick="aplicarTema()" style="margin-top: 1.5rem;">
-          Aplicar Tema
-        </button>
-      </div>
-
       <!-- Documentação do Sistema -->
       <div class="setting-card">
         <div class="setting-header">
-          <div class="setting-icon">📚</div>
+          <div class="setting-icon"></div>
           <h3 class="setting-title">Documentação</h3>
         </div>
         <p class="setting-description">Acesse a documentação completa do sistema para entender todas as funcionalidades disponíveis.</p>
@@ -551,14 +525,14 @@
         </div>
 
         <button class="btn btn-info" onclick="baixarDocumentacao()" style="margin-top: 1.5rem;">
-          📥 Baixar Documentação
+           Baixar Documentação
         </button>
       </div>
 
       <!-- Status do Sistema -->
       <div class="setting-card">
         <div class="setting-header">
-          <div class="setting-icon">⚙️</div>
+          <div class="setting-icon"></div>
           <h3 class="setting-title">Status do Sistema</h3>
         </div>
         <p class="setting-description">Verifique o status atual do sistema e disponibilidade de atualizações.</p>
@@ -584,14 +558,14 @@
         </div>
 
         <button class="btn btn-secondary" onclick="verificarAtualizacoes()" style="margin-top: 1.5rem;">
-          🔄 Verificar Atualizações
+           Verificar Atualizações
         </button>
       </div>
 
       <!-- Informações do Sistema -->
       <div class="setting-card">
         <div class="setting-header">
-          <div class="setting-icon">ℹ️</div>
+          <div class="setting-icon"></div>
           <h3 class="setting-title">Informações</h3>
         </div>
         <p class="setting-description">Informações técnicas e de suporte do sistema Agendamento+.</p>
@@ -612,7 +586,7 @@
         </div>
 
         <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
-         
+    
         </div>
       </div>
     </div>
@@ -625,13 +599,12 @@
       <a href="#" class="logo">Agendamento+</a>
       <p>Sistema de Agendamento Online</p>
     </div>
-    <nav class="footer-nav">
+  <nav class="footer-nav">
       <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="servicos.html" class="nav-link">Serviços</a>
-      <a href="agendamentos.html" class="nav-link">Agendamentos</a>
+      <a href="serviços.html" class="nav-link">Serviços</a>
+      <a href="agendamento.html" class="nav-link">Agendamentos</a>
       <a href="clientes.html" class="nav-link">Clientes</a>
       <a href="perfil.html" class="nav-link">Perfil</a>
-      <a href="configuracoes.html" class="nav-link">Configurações</a>
     </nav>
     <div class="footer-social">
       <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">Instagram</a>
@@ -653,16 +626,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // =====================
   function inicializarTema() {
     const currentTheme = localStorage.getItem('theme') || 'light';
-    const darkModeToggle = document.getElementById('darkModeToggle');
     
-    // Configurar o toggle baseado no tema atual
-    if (currentTheme === 'dark') {
-      darkModeToggle.checked = true;
-      document.getElementById('currentTheme').textContent = 'Escuro';
-    } else {
-      darkModeToggle.checked = false;
-      document.getElementById('currentTheme').textContent = 'Claro';
-    }
+    // Aplicar tema atual
+    document.documentElement.setAttribute('data-theme', currentTheme);
   }
 
   // =====================
@@ -682,26 +648,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // =====================
   // FUNÇÕES DE CONFIGURAÇÃO
   // =====================
-  window.aplicarTema = () => {
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const newTheme = darkModeToggle.checked ? 'dark' : 'light';
-    
-    // Aplicar tema
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    
-    // Atualizar texto
-    document.getElementById('currentTheme').textContent = darkModeToggle.checked ? 'Escuro' : 'Claro';
-    
-    // Atualizar botão do header se existir
-    const themeToggle = document.getElementById('themeToggle');
-    if (themeToggle) {
-      themeToggle.textContent = newTheme === 'light' ? '🌙 Tema Escuro' : '☀️ Tema Claro';
-    }
-    
-    alert(`Tema ${newTheme === 'dark' ? 'escuro' : 'claro'} aplicado com sucesso!`);
-  };
-
   window.baixarDocumentacao = () => {
     // Criar conteúdo da documentação
     const documentacao = `

@@ -310,29 +310,6 @@
       background-color: rgba(0,123,255,0.08);
     }
 
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .status-badge.confirmado {
-      background-color: var(--success-color);
-      color: white;
-    }
-
-    .status-badge.pendente {
-      background-color: var(--warning-color);
-      color: black;
-    }
-
-    .status-badge.cancelado {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
     /* ========================
        FOOTER RESPONSIVO
     ======================== */
@@ -592,34 +569,34 @@
         <p class="stat-label">Agendamentos Hoje</p>
       </div>
       <div class="stat-card success" onclick="window.location.href='agendamentos.html'">
-        <h3 class="stat-value" id="agendamentosSemana">0</h3>
-        <p class="stat-label">Agendamentos Esta Semana</p>
+        <h3 class="stat-value" id="agendamentosMes">0</h3>
+        <p class="stat-label">Agendamentos Este Mês</p>
       </div>
       <div class="stat-card warning" onclick="window.location.href='servicos.html'">
         <h3 class="stat-value" id="servicosDisponiveis">0</h3>
         <p class="stat-label">Serviços Disponíveis</p>
       </div>
-      <div class="stat-card danger" onclick="window.location.href='agendamentos.html'">
-        <h3 class="stat-value" id="pendencias">0</h3>
-        <p class="stat-label">Pendências</p>
-      </div>
-      <div class="stat-card info" onclick="window.location.href='clientes.html'">
+      <div class="stat-card danger" onclick="window.location.href='clientes.html'">
         <h3 class="stat-value" id="totalClientes">0</h3>
         <p class="stat-label">Total de Clientes</p>
+      </div>
+      <div class="stat-card info" onclick="window.location.href='agendamentos.html'">
+        <h3 class="stat-value" id="agendamentosPendentes">0</h3>
+        <p class="stat-label">Agendamentos Pendentes</p>
       </div>
     </div>
 
     <div class="quick-actions">
-      <a href="agendamento.html" class="action-btn">📅 Novo Agendamento</a>
-      <a href="servicos.html" class="action-btn">🛠️ Gerenciar Serviços</a>
-      <a href="clientes.html" class="action-btn">👥 Ver Clientes</a>
-      <a href="configuracoes.html" class="action-btn">⚙️ Configurações</a>
+      <a href="agendamentos.html" class="action-btn"> Novo Agendamento</a>
+      <a href="servicos.html" class="action-btn"> Gerenciar Serviços</a>
+      <a href="clientes.html" class="action-btn"> Ver Clientes</a>
+      <a href="perfil.html" class="action-btn"> Configurações</a>
     </div>
   </section>
 
   <div class="chart-container">
-    <h3 class="chart-title">Serviços Mais Populares</h3>
-    <div class="chart" id="graficoServicos">
+    <h3 class="chart-title">Status dos Agendamentos</h3>
+    <div class="chart" id="graficoStatus">
       <!-- Gráfico será gerado dinamicamente -->
     </div>
   </div>
@@ -653,10 +630,10 @@
     </div>
     <nav class="footer-nav">
       <a href="dashboard.html" class="nav-link">Dashboard</a>
-      <a href="servicos.html" class="nav-link">Serviços</a>
-      <a href="agendamentos.html" class="nav-link">Agendamentos</a>
+      <a href="serviços.html" class="nav-link">Serviços</a>
+      <a href="agendamento.html" class="nav-link">Agendamentos</a>
       <a href="clientes.html" class="nav-link">Clientes</a>
-      <a href="configuracoes.html" class="nav-link">Configurações</a>
+      <a href="perfil.html" class="nav-link">Perfil</a>
     </nav>
     <div class="footer-social">
       <a href="https://www.instagram.com/pauloryantomaz/" target="_blank" class="footer-link">Instagram</a>
@@ -671,7 +648,7 @@
 <script src="header.js"></script>
 <script>
 // =====================
-// DASHBOARD COM INTEGRAÇÃO EM TEMPO REAL
+// DASHBOARD COM BANCO DE DADOS FLASK
 // =====================
 document.addEventListener('DOMContentLoaded', () => {
   
@@ -685,62 +662,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =====================
-  // CARREGAR DADOS DAS APIS
+  // CARREGAR DADOS DO BANCO
   // =====================
   
-  async function carregarDashboard() {
-    try {
-      // Carrega dados de todas as APIs simultaneamente
-      const [agendamentosRes, servicosRes, clientesRes] = await Promise.all([
-        fetch('/api/agendamentos'),
-        fetch('/api/servicos'),
-        fetch('/api/clientes')
-      ]);
-
-      const agendamentos = await agendamentosRes.json();
-      const servicos = await servicosRes.json();
-      const clientes = await clientesRes.json();
-
+  function carregarDashboard() {
+    Promise.all([
+      fetch('/api/agendamentos').then(r => r.json()),
+      fetch('/api/dashboard/estatisticas').then(r => r.json())
+    ])
+    .then(([agendamentos, estatisticas]) => {
       // Atualiza estatísticas
-      atualizarEstatisticas(agendamentos, servicos, clientes);
+      atualizarEstatisticas(estatisticas);
       
       // Atualiza agendamentos recentes
       carregarAgendamentosRecentes(agendamentos);
       
       // Atualiza gráfico
-      atualizarGraficoServicos(agendamentos, servicos);
-
-    } catch (error) {
+      atualizarGraficoStatus(estatisticas);
+    })
+    .catch(error => {
       console.error('Erro ao carregar dashboard:', error);
-    }
+      document.getElementById('tabelaAgendamentosBody').innerHTML = 
+        '<tr><td colspan="5" style="text-align: center;">Erro ao carregar dados</td></tr>';
+    });
   }
 
-  function atualizarEstatisticas(agendamentos, servicos, clientes) {
-    const hoje = new Date().toISOString().split('T')[0];
-    
-    // Agendamentos hoje
-    const agendamentosHoje = agendamentos.filter(a => a.data_agendamento === hoje).length;
-    
-    // Agendamentos esta semana
-    const hojeObj = new Date();
-    const inicioSemana = new Date(hojeObj);
-    inicioSemana.setDate(hojeObj.getDate() - hojeObj.getDay());
-    inicioSemana.setHours(0, 0, 0, 0);
-    
-    const agendamentosSemana = agendamentos.filter(a => {
-      const dataAgendamento = new Date(a.data_agendamento);
-      return dataAgendamento >= inicioSemana;
-    }).length;
-
-    // Pendências
-    const pendencias = agendamentos.filter(a => a.status === 'pendente').length;
-
-    // Atualiza os valores na tela
-    document.getElementById('agendamentosHoje').textContent = agendamentosHoje;
-    document.getElementById('agendamentosSemana').textContent = agendamentosSemana;
-    document.getElementById('servicosDisponiveis').textContent = servicos.length;
-    document.getElementById('pendencias').textContent = pendencias;
-    document.getElementById('totalClientes').textContent = clientes.length;
+  function atualizarEstatisticas(estatisticas) {
+    document.getElementById('agendamentosHoje').textContent = estatisticas.agendamentos_hoje;
+    document.getElementById('agendamentosMes').textContent = estatisticas.agendamentos_mes;
+    document.getElementById('servicosDisponiveis').textContent = estatisticas.total_servicos;
+    document.getElementById('totalClientes').textContent = estatisticas.total_clientes;
+    document.getElementById('agendamentosPendentes').textContent = estatisticas.agendamentos_pendentes;
   }
 
   function carregarAgendamentosRecentes(agendamentos) {
@@ -749,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ordena por data mais recente e pega os últimos 5
     const recentes = agendamentos
-      .sort((a, b) => new Date(b.data_agendamento + ' ' + b.hora_agendamento) - new Date(a.data_agendamento + ' ' + a.hora_agendamento))
+      .sort((a, b) => new Date(b.data_agendamento + 'T' + b.hora_agendamento) - new Date(a.data_agendamento + 'T' + a.hora_agendamento))
       .slice(0, 5);
 
     if (recentes.length === 0) {
@@ -760,63 +712,63 @@ document.addEventListener('DOMContentLoaded', () => {
     recentes.forEach(agendamento => {
       const tr = document.createElement('tr');
       const status = agendamento.status || 'pendente';
+      const statusClass = status === 'realizado' ? 'success' : 
+                         status === 'confirmado' ? 'info' :
+                         status === 'cancelado' ? 'danger' : 'warning';
+      
       tr.innerHTML = `
         <td>${agendamento.cliente_nome || 'Cliente não encontrado'}</td>
         <td>${agendamento.servico_nome || 'Serviço não encontrado'}</td>
         <td>${formatarData(agendamento.data_agendamento)}</td>
         <td>${agendamento.hora_agendamento}</td>
-        <td><span class="status-badge ${status}">${status}</span></td>
+        <td>
+          <span style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background-color: var(--${statusClass}-color); color: white;">
+            ${status.charAt(0).toUpperCase() + status.slice(1)}
+          </span>
+        </td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  function atualizarGraficoServicos(agendamentos, servicos) {
-    const graficoServicos = document.getElementById('graficoServicos');
+  function atualizarGraficoStatus(estatisticas) {
+    const graficoStatus = document.getElementById('graficoStatus');
     
-    // Conta agendamentos por serviço
-    const servicosCount = {};
-    agendamentos.forEach(agendamento => {
-      const servicoNome = agendamento.servico_nome;
-      if (servicoNome) {
-        servicosCount[servicoNome] = (servicosCount[servicoNome] || 0) + 1;
-      }
-    });
+    const statusData = [
+      { label: 'Pendentes', value: estatisticas.agendamentos_pendentes, color: 'var(--warning-color)' },
+      { label: 'Confirmados', value: estatisticas.agendamentos_confirmados, color: 'var(--info-color)' },
+      { label: 'Realizados', value: estatisticas.agendamentos_realizados, color: 'var(--success-color)' },
+      { label: 'Cancelados', value: estatisticas.agendamentos_cancelados || 0, color: 'var(--danger-color)' }
+    ];
 
-    // Ordena por quantidade (mais populares primeiro)
-    const servicosMaisPopulares = Object.entries(servicosCount)
-      .sort(([,a], [,b]) => b - a)
-      .slice(0, 6); // Top 6 serviços
+    const total = statusData.reduce((sum, item) => sum + item.value, 0);
 
-    // Encontra o máximo para calcular porcentagens
-    const maxCount = Math.max(...servicosMaisPopulares.map(([, count]) => count), 1);
-
-    if (servicosMaisPopulares.length === 0) {
-      graficoServicos.innerHTML = '<p style="text-align: center; color: var(--secondary-color);">Nenhum dado disponível para o gráfico</p>';
+    if (total === 0) {
+      graficoStatus.innerHTML = '<p style="text-align: center; color: var(--secondary-color);">Nenhum dado disponível para o gráfico</p>';
       return;
     }
 
     // Cria o gráfico de barras
     let chartHTML = '';
-    servicosMaisPopulares.forEach(([servico, count]) => {
-      const porcentagem = (count / maxCount) * 100;
+    statusData.forEach(item => {
+      const porcentagem = total > 0 ? (item.value / total) * 100 : 0;
       chartHTML += `
         <div class="chart-bar">
-          <span class="chart-label">${servico}</span>
+          <span class="chart-label">${item.label}</span>
           <div class="chart-bar-container">
-            <div class="chart-bar-fill" style="width: ${porcentagem}%">
-              ${count} agendamentos
+            <div class="chart-bar-fill" style="width: ${porcentagem}%; background: ${item.color}">
+              ${item.value} (${porcentagem.toFixed(1)}%)
             </div>
           </div>
         </div>
       `;
     });
 
-    graficoServicos.innerHTML = chartHTML;
+    graficoStatus.innerHTML = chartHTML;
 
     // Anima as barras
     setTimeout(() => {
-      const bars = graficoServicos.querySelectorAll('.chart-bar-fill');
+      const bars = graficoStatus.querySelectorAll('.chart-bar-fill');
       bars.forEach(bar => {
         const width = bar.style.width;
         bar.style.width = '0%';
@@ -828,10 +780,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =====================
+  // EVENTOS E LISTENERS
+  // =====================
+  
+  // Atualiza quando a página ganha foco
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      carregarDashboard();
+    }
+  });
+
+  // =====================
   // INICIALIZAÇÃO
   // =====================
   
-  // Carrega dados iniciais
+  // Carregar dados ao iniciar
   carregarDashboard();
 
   // Preloader
@@ -853,13 +816,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Atualiza dados a cada 30 segundos
   setInterval(carregarDashboard, 30000);
-
-  // Atualiza quando a página ganha foco (quando usuário volta para a aba)
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-      carregarDashboard();
-    }
-  });
 });
 </script>
 </body>
