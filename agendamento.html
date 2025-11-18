@@ -6,6 +6,7 @@
   <title>Agendamentos - Sistema Completo</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="header.css">
+  <script src="header.js"></script>
   <style>
     /* ========================
        VARIÁVEIS DE TEMA
@@ -183,7 +184,7 @@
 
     .filtros-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
     }
@@ -602,8 +603,6 @@
   <div class="preloader-text">Carregando dados...</div>
 </div>
 
-<!-- Header será inserido automaticamente pelo header.js -->
-
 <main class="container">
   <section class="section">
     <div class="page-header">
@@ -616,7 +615,6 @@
     <!-- Filtros -->
     <div class="filtros-container">
       <div class="filtros-header">
-       
         <button class="filtros-toggle" id="toggleFiltros">
           <i class="fas fa-filter"></i> Filtros
         </button>
@@ -809,7 +807,6 @@
   </div>
 </footer>
 
-<script src="header.js"></script>
 <script>
 // =====================
 // GERENCIAMENTO DE AGENDAMENTOS
@@ -827,6 +824,68 @@ let filtrosAtivos = {
   servico: ''
 };
 
+// Dados de exemplo para demonstração
+const dadosExemplo = {
+  agendamentos: [
+    {
+      id: 1,
+      cliente_id: 1,
+      cliente_nome: "João Silva",
+      cliente_telefone: "(11) 99999-9999",
+      servico_id: 1,
+      servico_nome: "Corte de Cabelo",
+      data_agendamento: "2025-03-20",
+      hora_agendamento: "09:00",
+      status: "pendente"
+    },
+    {
+      id: 2,
+      cliente_id: 2,
+      cliente_nome: "Maria Santos",
+      cliente_telefone: "(11) 88888-8888",
+      servico_id: 2,
+      servico_nome: "Manicure",
+      data_agendamento: "2025-03-21",
+      hora_agendamento: "14:30",
+      status: "confirmado"
+    },
+    {
+      id: 3,
+      cliente_id: 3,
+      cliente_nome: "Pedro Oliveira",
+      cliente_telefone: "(11) 77777-7777",
+      servico_id: 3,
+      servico_nome: "Barba",
+      data_agendamento: "2025-03-19",
+      hora_agendamento: "10:15",
+      status: "realizado"
+    },
+    {
+      id: 4,
+      cliente_id: 1,
+      cliente_nome: "João Silva",
+      cliente_telefone: "(11) 99999-9999",
+      servico_id: 1,
+      servico_nome: "Corte de Cabelo",
+      data_agendamento: "2025-03-25",
+      hora_agendamento: "16:00",
+      status: "cancelado"
+    }
+  ],
+  clientes: [
+    { id: 1, nome: "João Silva", telefone: "(11) 99999-9999" },
+    { id: 2, nome: "Maria Santos", telefone: "(11) 88888-8888" },
+    { id: 3, nome: "Pedro Oliveira", telefone: "(11) 77777-7777" },
+    { id: 4, nome: "Ana Costa", telefone: "(11) 66666-6666" }
+  ],
+  servicos: [
+    { id: 1, nome: "Corte de Cabelo", valor: 30.00 },
+    { id: 2, nome: "Manicure", valor: 25.00 },
+    { id: 3, nome: "Barba", valor: 20.00 },
+    { id: 4, nome: "Pedicure", valor: 30.00 }
+  ]
+};
+
 // Carregar dados iniciais
 document.addEventListener('DOMContentLoaded', function() {
   carregarAgendamentos();
@@ -837,6 +896,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('toggleFiltros').addEventListener('click', toggleFiltros);
   document.getElementById('btnAplicarFiltros').addEventListener('click', aplicarFiltros);
   document.getElementById('btnLimparFiltros').addEventListener('click', limparFiltros);
+  
+  // Event listeners para mudanças nos filtros (filtro automático)
+  document.getElementById('filtroStatus').addEventListener('change', aplicarFiltros);
+  document.getElementById('filtroDataInicio').addEventListener('change', aplicarFiltros);
+  document.getElementById('filtroDataFim').addEventListener('change', aplicarFiltros);
+  document.getElementById('filtroCliente').addEventListener('change', aplicarFiltros);
+  document.getElementById('filtroServico').addEventListener('change', aplicarFiltros);
   
   document.getElementById('btnNovoAgendamento').addEventListener('click', abrirModalNovo);
   document.getElementById('formAgendamento').addEventListener('submit', salvarAgendamento);
@@ -933,86 +999,55 @@ function filtrarAgendamentos() {
 }
 
 function carregarAgendamentos() {
-  fetch('/api/agendamentos')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro ao carregar agendamentos');
-      }
-      return response.json();
-    })
-    .then(agendamentos => {
-      todosAgendamentos = agendamentos;
-      filtrarAgendamentos();
-    })
-    .catch(error => {
-      console.error('Erro ao carregar agendamentos:', error);
-      document.getElementById('tabelaAgendamentosBody').innerHTML = 
-        '<tr><td colspan="6" style="text-align: center;">Erro ao carregar agendamentos</td></tr>';
-    });
+  // Simulação de API - usando dados de exemplo
+  setTimeout(() => {
+    todosAgendamentos = dadosExemplo.agendamentos;
+    filtrarAgendamentos();
+  }, 1000);
 }
 
 function carregarClientes() {
-  fetch('/api/clientes')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro ao carregar clientes');
-      }
-      return response.json();
-    })
-    .then(data => {
-      clientes = data;
-      
-      // Preencher select do modal
-      const selectEdit = document.getElementById('editCliente');
-      selectEdit.innerHTML = '<option value="">Selecione um cliente</option>';
-      
-      // Preencher select do filtro
-      const selectFiltro = document.getElementById('filtroCliente');
-      selectFiltro.innerHTML = '<option value="">Todos os clientes</option>';
-      
-      clientes.forEach(cliente => {
-        const option = new Option(cliente.nome, cliente.id);
-        const optionFiltro = new Option(cliente.nome, cliente.id);
-        selectEdit.add(option);
-        selectFiltro.add(optionFiltro);
-      });
-    })
-    .catch(error => {
-      console.error('Erro ao carregar clientes:', error);
-      alert('Erro ao carregar lista de clientes');
+  // Simulação de API - usando dados de exemplo
+  setTimeout(() => {
+    clientes = dadosExemplo.clientes;
+    
+    // Preencher select do modal
+    const selectEdit = document.getElementById('editCliente');
+    selectEdit.innerHTML = '<option value="">Selecione um cliente</option>';
+    
+    // Preencher select do filtro
+    const selectFiltro = document.getElementById('filtroCliente');
+    selectFiltro.innerHTML = '<option value="">Todos os clientes</option>';
+    
+    clientes.forEach(cliente => {
+      const option = new Option(cliente.nome, cliente.id);
+      const optionFiltro = new Option(cliente.nome, cliente.id);
+      selectEdit.add(option);
+      selectFiltro.add(optionFiltro);
     });
+  }, 500);
 }
 
 function carregarServicos() {
-  fetch('/api/servicos')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro ao carregar serviços');
-      }
-      return response.json();
-    })
-    .then(data => {
-      servicos = data;
-      
-      // Preencher select do modal
-      const selectEdit = document.getElementById('editServico');
-      selectEdit.innerHTML = '<option value="">Selecione um serviço</option>';
-      
-      // Preencher select do filtro
-      const selectFiltro = document.getElementById('filtroServico');
-      selectFiltro.innerHTML = '<option value="">Todos os serviços</option>';
-      
-      servicos.forEach(servico => {
-        const option = new Option(`${servico.nome} - R$ ${parseFloat(servico.valor).toFixed(2)}`, servico.id);
-        const optionFiltro = new Option(servico.nome, servico.id);
-        selectEdit.add(option);
-        selectFiltro.add(optionFiltro);
-      });
-    })
-    .catch(error => {
-      console.error('Erro ao carregar serviços:', error);
-      alert('Erro ao carregar lista de serviços');
+  // Simulação de API - usando dados de exemplo
+  setTimeout(() => {
+    servicos = dadosExemplo.servicos;
+    
+    // Preencher select do modal
+    const selectEdit = document.getElementById('editServico');
+    selectEdit.innerHTML = '<option value="">Selecione um serviço</option>';
+    
+    // Preencher select do filtro
+    const selectFiltro = document.getElementById('filtroServico');
+    selectFiltro.innerHTML = '<option value="">Todos os serviços</option>';
+    
+    servicos.forEach(servico => {
+      const option = new Option(`${servico.nome} - R$ ${parseFloat(servico.valor).toFixed(2)}`, servico.id);
+      const optionFiltro = new Option(servico.nome, servico.id);
+      selectEdit.add(option);
+      selectFiltro.add(optionFiltro);
     });
+  }, 500);
 }
 
 function atualizarEstatisticas(agendamentos) {
@@ -1157,27 +1192,11 @@ function salvarAgendamento(e) {
     return;
   }
 
-  fetch('/api/agendamentos', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(dados)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert(data.message);
-      fecharModalAgendamento();
-      carregarAgendamentos();
-    } else {
-      alert(data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Erro ao salvar agendamento:', error);
-    alert('Erro ao salvar agendamento');
-  });
+  // Simulação de API
+  alert('Agendamento salvo com sucesso!');
+  fecharModalAgendamento();
+  // Recarregar os agendamentos
+  carregarAgendamentos();
 }
 
 function atualizarStatus(e) {
@@ -1190,47 +1209,19 @@ function atualizarStatus(e) {
     return;
   }
 
-  fetch(`/api/agendamentos/${agendamentoStatusEditando}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ status: novoStatus })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert(data.message);
-      fecharModalStatus();
-      carregarAgendamentos();
-    } else {
-      alert(data.message);
-    }
-  })
-  .catch(error => {
-    console.error('Erro ao atualizar status:', error);
-    alert('Erro ao atualizar status do agendamento');
-  });
+  // Simulação de API
+  alert(`Status do agendamento atualizado para: ${novoStatus}`);
+  fecharModalStatus();
+  // Recarregar os agendamentos
+  carregarAgendamentos();
 }
 
 function excluirAgendamento(id) {
   if (confirm('Tem certeza que deseja excluir este agendamento?')) {
-    fetch(`/api/agendamentos/${id}`, {
-      method: 'DELETE'
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert(data.message);
-        carregarAgendamentos();
-      } else {
-        alert(data.message);
-      }
-    })
-    .catch(error => {
-      console.error('Erro ao excluir agendamento:', error);
-      alert('Erro ao excluir agendamento');
-    });
+    // Simulação de API
+    alert('Agendamento excluído com sucesso!');
+    // Recarregar os agendamentos
+    carregarAgendamentos();
   }
 }
 
@@ -1250,6 +1241,88 @@ window.addEventListener('load', () => {
     }, remainingTime);
   }, minLoadTime);
 });
+function carregarAgendamentos() {
+    fetch('/api/agendamentos')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar agendamentos');
+            }
+            return response.json();
+        })
+        .then(agendamentos => {
+            todosAgendamentos = agendamentos;
+            filtrarAgendamentos();
+        })
+        .catch(error => {
+            console.error('Erro ao carregar agendamentos:', error);
+            document.getElementById('tabelaAgendamentosBody').innerHTML = 
+                '<tr><td colspan="6" style="text-align: center;">Erro ao carregar agendamentos</td></tr>';
+        });
+}
+
+function carregarClientes() {
+    fetch('/api/clientes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar clientes');
+            }
+            return response.json();
+        })
+        .then(data => {
+            clientes = data;
+            
+            // Preencher select do modal
+            const selectEdit = document.getElementById('editCliente');
+            selectEdit.innerHTML = '<option value="">Selecione um cliente</option>';
+            
+            // Preencher select do filtro
+            const selectFiltro = document.getElementById('filtroCliente');
+            selectFiltro.innerHTML = '<option value="">Todos os clientes</option>';
+            
+            clientes.forEach(cliente => {
+                const option = new Option(cliente.nome, cliente.id);
+                const optionFiltro = new Option(cliente.nome, cliente.id);
+                selectEdit.add(option);
+                selectFiltro.add(optionFiltro);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar clientes:', error);
+            alert('Erro ao carregar lista de clientes');
+        });
+}
+
+function carregarServicos() {
+    fetch('/api/servicos')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao carregar serviços');
+            }
+            return response.json();
+        })
+        .then(data => {
+            servicos = data;
+            
+            // Preencher select do modal
+            const selectEdit = document.getElementById('editServico');
+            selectEdit.innerHTML = '<option value="">Selecione um serviço</option>';
+            
+            // Preencher select do filtro
+            const selectFiltro = document.getElementById('filtroServico');
+            selectFiltro.innerHTML = '<option value="">Todos os serviços</option>';
+            
+            servicos.forEach(servico => {
+                const option = new Option(servico.nome, servico.id);
+                const optionFiltro = new Option(servico.nome, servico.id);
+                selectEdit.add(option);
+                selectFiltro.add(optionFiltro);
+            });
+        })
+        .catch(error => {
+            console.error('Erro ao carregar serviços:', error);
+            alert('Erro ao carregar lista de serviços');
+        });
+}
 </script>
 </body>
 </html>
